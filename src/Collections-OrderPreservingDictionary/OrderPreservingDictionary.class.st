@@ -1,17 +1,23 @@
 "
-This class is a Dictionary that preserves the order in which associations are added to it. That means #keys, #keysDo:, #keysAndValuesDo:, #values, #valuesDo:, #associations, and #associationsDo: are all ordered based on key insertion order.
+This class is a Dictionary that preserves the order in which associations are added to it. That means messages that return collections of keys, values or associations or messages that enumerate those collections all operate based on key insertion order. Key order is not, however, considered when comparing dictionaries for equality; and instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Additionally, instances return a configurable default value when an absent key or value is requirested from it rather than raising an exception, which by default is nil. Other than those differences, this class can generally be used like a regular Dictionary.
 
-This class is not a subclass of HashedCollection due to a belief that relying on the public API of Dictionary is probably a safer long-term bet than relying on the public and private API of a relatively recent addition to Squeak and Pharo.
+(This class is not a subclass of HashedCollection due to a belief that relying on the public API of Dictionary is probably a safer long-term bet than relying on the public and private API of a relatively recent addition to Squeak and Pharo.)
 "
 Class {
 	#name : #OrderPreservingDictionary,
 	#superclass : #Collection,
 	#instVars : [
 		'dictionary',
-		'orderedKeys'
+		'orderedKeys',
+		'defaultValue'
 	],
 	#category : #'Collections-OrderPreservingDictionary'
 }
+
+{ #category : #'instance creation' }
+OrderPreservingDictionary class >> defaultValue: aDefaultValue [
+	^ self new defaultValue: aDefaultValue
+]
 
 { #category : #'instance creation' }
 OrderPreservingDictionary class >> new [
@@ -19,8 +25,13 @@ OrderPreservingDictionary class >> new [
 ]
 
 { #category : #'instance creation' }
-OrderPreservingDictionary class >> new: aSize [
-	^ self basicNew initialize: aSize
+OrderPreservingDictionary class >> new: aCapacity [
+	^ self new: aCapacity withDefaultValue: nil
+]
+
+{ #category : #'instance creation' }
+OrderPreservingDictionary class >> new: aCapacity withDefaultValue: aDefaultValue [
+	^ self basicNew initialize: aCapacity withDefaultValue: aDefaultValue
 ]
 
 { #category : #'instance creation' }
@@ -29,14 +40,15 @@ OrderPreservingDictionary class >> newFrom: aDictionaryOrArray [
 
 	newDictionary := self new: aDictionaryOrArray size.
 	aDictionaryOrArray associationsDo: [:each | newDictionary add: each].
+	(aDictionaryOrArray respondsTo: #defaultValue)
+		ifTrue: [newDictionary defaultValue: aDictionaryOrArray defaultValue].
 	^ newDictionary.
 ]
 
 { #category : #comparing }
 OrderPreservingDictionary >> = anObject [
 	^ self == anObject
-		or: [self class == anObject class
-			and: [self dictionary = anObject dictionary]]
+		or: [anObject isDictionary and: [dictionary = anObject]]
 ]
 
 { #category : #adding }
@@ -59,7 +71,7 @@ OrderPreservingDictionary >> addOrderedKeyIfAbsent: aString [
 
 { #category : #accessing }
 OrderPreservingDictionary >> associationAt: aKey [
-	^ self associationAt: aKey ifAbsent: [self defaultValue]
+	^ self associationAt: aKey ifAbsent: [nil]
 ]
 
 { #category : #accessing }
@@ -97,7 +109,7 @@ OrderPreservingDictionary >> associationsSelect: aBlock [
 
 { #category : #accessing }
 OrderPreservingDictionary >> at: aKey [
-	^ self at: aKey ifAbsent: [self defaultValue]
+	^ self at: aKey ifAbsent: [defaultValue]
 ]
 
 { #category : #accessing }
@@ -113,11 +125,6 @@ OrderPreservingDictionary >> at: aKey ifAbsentPut: aBlock [
 { #category : #accessing }
 OrderPreservingDictionary >> at: aKey ifPresent: aBlock [
 	^ dictionary at: aKey ifPresent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey ifPresentAndInMemory: aBlock [
-	^ dictionary at: aKey ifPresentAndInMemory: aBlock
 ]
 
 { #category : #accessing }
@@ -140,7 +147,7 @@ OrderPreservingDictionary >> collect: aBlock [
 
 { #category : #copying }
 OrderPreservingDictionary >> copyEmpty [
-	^ self species new
+	^ self species defaultValue: defaultValue
 ]
 
 { #category : #adding }
@@ -149,9 +156,14 @@ OrderPreservingDictionary >> declare: aKey from: aDictionary [
 	dictionary declare: aKey from: aDictionary.
 ]
 
-{ #category : #private }
+{ #category : #accessing }
 OrderPreservingDictionary >> defaultValue [
-	^ ''
+	^ defaultValue
+]
+
+{ #category : #accessing }
+OrderPreservingDictionary >> defaultValue: aDefaultValue [
+	defaultValue := aDefaultValue
 ]
 
 { #category : #private }
@@ -200,9 +212,10 @@ OrderPreservingDictionary >> includesKey: aKey [
 ]
 
 { #category : #initialization }
-OrderPreservingDictionary >> initialize: aSize [
-	dictionary := Dictionary new: aSize.
-	orderedKeys := OrderedCollection new: aSize.
+OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
+	dictionary := Dictionary new: aCapacity.
+	orderedKeys := OrderedCollection new: aCapacity.
+	defaultValue := aDefaultValue.
 ]
 
 { #category : #inspecting }
@@ -217,7 +230,7 @@ OrderPreservingDictionary >> isDictionary [
 
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtIdentityValue: aValue [
-	^ self keyAtIdentityValue: aValue ifAbsent: [self defaultValue]
+	^ self keyAtIdentityValue: aValue ifAbsent: [defaultValue]
 ]
 
 { #category : #accessing }
@@ -227,7 +240,7 @@ OrderPreservingDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
 
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtValue: aValue [
-	^ self keyAtValue: aValue ifAbsent: [self defaultValue]
+	^ self keyAtValue: aValue ifAbsent: [defaultValue]
 ]
 
 { #category : #accessing }
@@ -328,7 +341,7 @@ OrderPreservingDictionary >> removeAll [
 
 { #category : #removing }
 OrderPreservingDictionary >> removeKey: aKey [
-	^ self removeKey: aKey ifAbsent: [self defaultValue]
+	^ self removeKey: aKey ifAbsent: [defaultValue]
 ]
 
 { #category : #removing }
