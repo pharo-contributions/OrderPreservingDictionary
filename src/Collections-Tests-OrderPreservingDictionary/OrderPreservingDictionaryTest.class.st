@@ -340,8 +340,10 @@ OrderPreservingDictionaryTest >> testDefaultValue [
 
 	dictionary defaultValue: 'differentDefaultValue'.
 	self assert: dictionary defaultValue = 'differentDefaultValue'.
+
+	dictionary := (self dictionaryClass newFrom: dictionary).
 	self
-		assert: (self dictionaryClass newFrom: dictionary) defaultValue = 'differentDefaultValue';
+		assert: dictionary defaultValue = 'differentDefaultValue';
 		assert: dictionary copy defaultValue = 'differentDefaultValue';
 		assert: dictionary copyEmpty defaultValue = 'differentDefaultValue'.
 ]
@@ -407,10 +409,8 @@ OrderPreservingDictionaryTest >> testEqualsDictionary [
 	"Dictionary>>addAll: can only accept keyed collections as an argument"
 	unorderedDictionary := Dictionary newFrom: self dictionaryAssociations.
 	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
-
-	self
-		assertDictionary: orderedDictionary
-		commutativelyEquals: (Dictionary newFrom: self dictionaryAssociations reversed).
+	unorderedDictionary := Dictionary newFrom: self dictionaryAssociations reversed.
+	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
 ]
 
 { #category : #tests }
@@ -658,10 +658,18 @@ OrderPreservingDictionaryTest >> testSelect [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testSize [
-	self
-		assert: self emptyDictionary size isZero;
-		assert: self dictionaryWithTestKeyValue size = 1;
-		assert: self dictionaryWithAssociations size = self dictionaryAssociations size.
+	| dictionary |
+
+	dictionary := self emptyDictionary.
+	self assert: dictionary size isZero.
+
+	self dictionaryAssociations doWithIndex: [:each :i |
+		dictionary add: each.
+		self assert: dictionary size = i].
+
+	self dictionaryAssociations size to: 1 by: -1 do: [:i |
+		dictionary removeKey: (self dictionaryKeys at: i).
+		self assert: dictionary size = (i - 1)].
 ]
 
 { #category : #tests }
