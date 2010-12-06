@@ -8,10 +8,12 @@ Class {
 }
 
 { #category : #assertions }
-OrderPreservingDictionaryTest >> assertDictionary: aDictionary commutativelyEquals: aSecondDictioanry [
+OrderPreservingDictionaryTest >> assertDictionary: aDictionary commutativelyEquals: aSecondDictionary [
 	self
-		assert: aDictionary = aSecondDictioanry;
-		assert: aSecondDictioanry = aDictionary
+		assert: aDictionary = aDictionary;
+		assert: aSecondDictionary = aSecondDictionary;
+		assert: aDictionary = aSecondDictionary;
+		assert: aSecondDictionary = aDictionary
 ]
 
 { #category : #assertions }
@@ -29,48 +31,26 @@ OrderPreservingDictionaryTest >> assertIsDictionary: anObject withAssociations: 
 ]
 
 { #category : #assertions }
-OrderPreservingDictionaryTest >> assertSelector: aSelector collects: aCollection [
-	| dictionary |
-
-	dictionary := self emptyDictionary.
+OrderPreservingDictionaryTest >> assertSelector: aSelector collects: aCollection from: aDictionary [
 	self
-		assert: (dictionary perform: aSelector) isArray;
-		assert: (dictionary perform: aSelector) isEmpty.
-
-	dictionary addAll: self dictionaryAssociations.
-	self assert: (dictionary perform: aSelector) = aCollection asArray.
+		assert: (self emptyDictionary perform: aSelector) = #();
+		assert: (aDictionary perform: aSelector) = aCollection asArray
 ]
 
 { #category : #assertions }
-OrderPreservingDictionaryTest >> assertSelector: aSelector enumerates: aCollection [
-	| dictionary enumerated |
+OrderPreservingDictionaryTest >> assertSelector: aSelector enumerates: aFirstCollection and: aSecondCollection from: aDictionary [
+	| firstEnumerated secondEnumerated|
 
-	dictionary := self emptyDictionary.
-	enumerated := OrderedCollection new.
-	dictionary perform: aSelector with: [:each | enumerated add: each].
-	self assert: enumerated isEmpty.
-
-	dictionary addAll: self dictionaryAssociations.
-	dictionary perform: aSelector with: [:each | enumerated add: each].
-	self assert: enumerated asArray = aCollection asArray
-]
-
-{ #category : #assertions }
-OrderPreservingDictionaryTest >> assertSelector: aSelector enumerates: aFirstCollection and: aSecondCollection [
-	| dictionary firstEnumerated secondEnumerated|
-
-	dictionary := self emptyDictionary.
 	firstEnumerated := OrderedCollection new.
 	secondEnumerated := OrderedCollection new.
-	dictionary perform: aSelector with: [:first :second |
+	self emptyDictionary perform: aSelector with: [:first :second |
 		firstEnumerated add: first.
 		secondEnumerated add: second].
 	self
 		assert: firstEnumerated isEmpty;
 		assert: secondEnumerated isEmpty.
 
-	dictionary addAll: self dictionaryAssociations.
-	dictionary perform: aSelector with: [:first :second |
+	aDictionary perform: aSelector with: [:first :second |
 		firstEnumerated add: first.
 		secondEnumerated add: second].
 	self
@@ -78,9 +58,21 @@ OrderPreservingDictionaryTest >> assertSelector: aSelector enumerates: aFirstCol
 		assert: secondEnumerated asArray = aSecondCollection asArray.
 ]
 
+{ #category : #assertions }
+OrderPreservingDictionaryTest >> assertSelector: aSelector enumerates: aCollection from: aDictionary [
+	| enumerated |
+
+	enumerated := OrderedCollection new.
+	self emptyDictionary perform: aSelector with: [:each | enumerated add: each].
+	self assert: enumerated isEmpty.
+
+	aDictionary perform: aSelector with: [:each | enumerated add: each].
+	self assert: enumerated asArray = aCollection asArray.
+]
+
 { #category : #accessing }
 OrderPreservingDictionaryTest >> dictionaryAssociations [
-	"Associations are returned out of their natural sort order"
+	"Associations are grouped out of their natural sort order"
 
 	^ Array
 		with: 'testKey'->'testValue'
@@ -195,12 +187,18 @@ OrderPreservingDictionaryTest >> testAssociationDeclareAt [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAssociations [
-	self assertSelector: #associations collects: self dictionaryAssociations.
+	self
+		assertSelector: #associations
+		collects: self dictionaryAssociations
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAssociationsDo [
-	self assertSelector: #associationsDo: enumerates: self dictionaryAssociations.
+	self
+		assertSelector: #associationsDo:
+		enumerates: self dictionaryAssociations
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
@@ -253,8 +251,11 @@ OrderPreservingDictionaryTest >> testAtIfPresent [
 
 	dictionary := self dictionaryWithTestKeyValue.
 	self
-		assert: (dictionary at: 'testKey' ifPresent: [:each | each = 'testValue']);
-		assert: (dictionary at: 'testKey2' ifPresent: ['present']) isNil.
+		assert:
+			(dictionary
+				at: 'testKey'
+				ifPresent: [:each | each = 'testValue' ifTrue: ['present'] ifFalse: [nil]]) = 'present';
+		assert: (dictionary at: 'testKey2' ifPresent: [:each | self signalFailure: 'Block should not have been evaluated']) isNil.
 ]
 
 { #category : #tests }
@@ -347,7 +348,10 @@ OrderPreservingDictionaryTest >> testDefaultValue [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testDo [
-	self assertSelector: #do: enumerates: self dictionaryValues
+	self
+		assertSelector: #do:
+		enumerates: self dictionaryValues
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
@@ -356,36 +360,57 @@ OrderPreservingDictionaryTest >> testDoWithIndex [
 		assertSelector: #doWithIndex:
 		enumerates: (self dictionaryAssociations collect: [:each | each value])
 		and: (1 to: self dictionaryAssociations size)
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testEquals [
 	| dictionaryOne dictionaryTwo |
 
-	self assertDictionary: self emptyDictionary commutativelyEquals: self emptyDictionary.
+	dictionaryOne := self emptyDictionary.
+	dictionaryTwo := self emptyDictionary.
+	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
 
-	dictionaryOne := self dictionaryWithTestKeyValue.
-	dictionaryTwo := self dictionaryWithTestKeyValue.
+	dictionaryOne add: self dictionaryAssociations first.
+	dictionaryTwo add: self dictionaryAssociations first. 
 	self
 		assertDictionary: dictionaryOne doesNotEqual: self emptyDictionary;
-		assertDictionary: dictionaryOne commutativelyEquals: dictionaryOne;
 		assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
 
 	"For equality, order will not matter"
-	dictionaryOne at: 'testKey2' put: 'testValue2'.
+	dictionaryOne add: self dictionaryAssociations second.
 	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryOne at: 'testKey3' put: 'testValue3'.
+	dictionaryOne add: self dictionaryAssociations third.
 	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryTwo at: 'testKey3' put: 'testValue3'.
+	dictionaryTwo add: self dictionaryAssociations third.
 	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryTwo at: 'testKey2' put: 'testValue2'.
+	dictionaryTwo add: self dictionaryAssociations second.
 	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
-	
+
+	dictionaryOne addAll: (self dictionaryAssociations allButFirst: 3).
+	dictionaryTwo addAll: (self dictionaryAssociations allButFirst: 3).
+	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testEqualsDictionary [
+	| orderedDictionary unorderedDictionary |
+
 	"Comparisons with Dictionaries that contain the same associations should work too"
-	self assertDictionary: self emptyDictionary commutativelyEquals: Dictionary new.
+	orderedDictionary := self emptyDictionary.
+	unorderedDictionary := Dictionary new.
+	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
+
+	orderedDictionary addAll: self dictionaryAssociations.
+	self assertDictionary: orderedDictionary doesNotEqual: unorderedDictionary.
+	
+	"Dictionary>>addAll: can only accept keyed collections as an argument"
+	unorderedDictionary := Dictionary newFrom: self dictionaryAssociations.
+	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
+
 	self
-		assertDictionary: dictionaryOne
-		commutativelyEquals: (Dictionary newFrom: dictionaryOne associations)
+		assertDictionary: orderedDictionary
+		commutativelyEquals: (Dictionary newFrom: self dictionaryAssociations reversed).
 ]
 
 { #category : #tests }
@@ -458,7 +483,7 @@ OrderPreservingDictionaryTest >> testIncludesKey [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testIsDictionary [
-	self assert: self emptyDictionary isDictionary
+	self assert: self dictionaryClass new isDictionary
 ]
 
 { #category : #tests }
@@ -469,7 +494,7 @@ OrderPreservingDictionaryTest >> testKeyAtIdentityValue [
 	dictionary defaultValue: 'defaultValue'.
 	value := dictionary at: 'testKey'.	
 	self
-		assert: (dictionary keyAtIdentityValue: 'testValue2') = 'defaultValue';
+		assert: (dictionary keyAtIdentityValue: 'absentValue') = 'defaultValue';
 		assert: (dictionary keyAtIdentityValue: value copy) = 'defaultValue';
 		assert: (dictionary keyAtValue: value) = 'testKey'.
 ]
@@ -481,7 +506,7 @@ OrderPreservingDictionaryTest >> testKeyAtIdentityValueIfAbsent [
 	dictionary := self dictionaryWithTestKeyValue.
 	value := dictionary at: 'testKey'.	
 	self
-		assert: (dictionary keyAtIdentityValue: 'testValue2' ifAbsent: ['absent']) = 'absent';
+		assert: (dictionary keyAtIdentityValue: 'absentValue' ifAbsent: ['absent']) = 'absent';
 		assert: (dictionary keyAtIdentityValue: value copy ifAbsent: ['absent']) = 'absent';
 		assert: (dictionary keyAtValue: value) = 'testKey'.
 ]
@@ -493,7 +518,7 @@ OrderPreservingDictionaryTest >> testKeyAtValue [
 	dictionary := self dictionaryWithTestKeyValue.
 	dictionary defaultValue: 'defaultValue'.
 	self
-		assert: (dictionary keyAtValue: 'testValue2') = 'defaultValue';
+		assert: (dictionary keyAtValue: 'absentValue') = 'defaultValue';
 		assert: (dictionary keyAtValue: 'testValue') = 'testKey'.
 ]
 
@@ -503,7 +528,7 @@ OrderPreservingDictionaryTest >> testKeyAtValueIfAbsent [
 
 	dictionary := self dictionaryWithTestKeyValue.
 	self
-		assert: (dictionary keyAtValue: 'testValue2' ifAbsent: ['absent']) = 'absent';
+		assert: (dictionary keyAtValue: 'absentValue' ifAbsent: ['absent']) = 'absent';
 		assert: (dictionary keyAtValue: 'testValue' ifAbsent: ['absent']) = 'testKey'.
 ]
 
@@ -516,12 +541,15 @@ OrderPreservingDictionaryTest >> testKeyForIdentity [
 	self
 		assert: (dictionary keyForIdentity: value) = 'testKey';
 		assert: (dictionary keyForIdentity: value copy) isNil;
-		assert: (dictionary keyForIdentity: 'testValue2') isNil.
+		assert: (dictionary keyForIdentity: 'absentValue') isNil.
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeys [
-	self assertSelector: #keys collects: self dictionaryKeys
+	self
+		assertSelector: #keys
+		collects: self dictionaryKeys
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
@@ -530,20 +558,24 @@ OrderPreservingDictionaryTest >> testKeysAndValuesDo [
 		assertSelector: #keysAndValuesDo:
 		enumerates: self dictionaryKeys
 		and: self dictionaryValues
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeysDo [
-	self assertSelector: #keysDo: enumerates: self dictionaryKeys
+	self
+		assertSelector: #keysDo:
+		enumerates: self dictionaryKeys
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeysSortedSafely [
 	"The keys are all strings, so the default #sorted implementation will suffice."
-
 	self
 		assertSelector: #keysSortedSafely
 		collects: self dictionaryKeys sorted
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
@@ -591,7 +623,7 @@ OrderPreservingDictionaryTest >> testRemoveKey [
 	dictionary := self dictionaryWithTestKeyValue.
 	dictionary defaultValue: 'defaultValue'.
 	self
-		assert: (dictionary removeKey: 'testKey2') = 'defaultValue';
+		assert: (dictionary removeKey: 'absentKey') = 'defaultValue';
 		assert: (dictionary removeKey: 'testKey') = 'testValue';
 		deny: (dictionary includesKey: 'testKey').
 
@@ -610,7 +642,7 @@ OrderPreservingDictionaryTest >> testRemoveKeyIfAbsent [
 
 	dictionary := self dictionaryWithTestKeyValue.
 	self
-		assert: (dictionary removeKey: 'testKey2' ifAbsent: ['absent']) = 'absent';
+		assert: (dictionary removeKey: 'absentKey' ifAbsent: ['absent']) = 'absent';
 		assert: (dictionary removeKey: 'testKey' ifAbsent: ['absent']) = 'testValue';
 		deny: (dictionary includesKey: 'testKey').
 ]
@@ -634,10 +666,16 @@ OrderPreservingDictionaryTest >> testSize [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testValues [
-	self assertSelector: #values collects: self dictionaryValues
+	self
+		assertSelector: #values
+		collects: self dictionaryValues
+		from: self dictionaryWithAssociations
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testValuesDo [
-	self assertSelector: #valuesDo: enumerates: self dictionaryValues
+	self
+		assertSelector: #valuesDo:
+		enumerates: self dictionaryValues
+		from: self dictionaryWithAssociations
 ]
