@@ -1,5 +1,5 @@
 "
-This class is a Dictionary that preserves the order in which associations are added to it. That means messages that return collections of keys, values or associations and messages that enumerate those collections all operate based on the order that key-value pairs were added to the receiver. Key insertion order is not, however, considered when comparing dictionaries for equality. As a result, instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Instances also return a configurable default value, which by default is nil, when an absent key or value is requirested from it rather than raising an exception. Other than those differences, this class can generally be used like Dictionary.
+This class is a Dictionary that preserves the order of its aassociations. That means messages that return collections of keys, values or associations and messages that enumerate those collections all operate based on the order that the underlying associations were added to the receiver. Key insertion order is not, however, considered when comparing dictionaries for equality. As a result, instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Instances also return a configurable default value, which is nil by default, when an absent key or value is requirested from it rather than raising an exception. Other than those differences, this class can generally be used the same way Dictionary can.
 
 (This class is not a subclass of HashedCollection due to a belief that relying on the public API of Dictionary is probably a safer long-term bet than relying on the public and private API of a relatively recent addition to Squeak and Pharo.)
 "
@@ -59,6 +59,11 @@ OrderPreservingDictionary >> add: anAssociation [
 
 { #category : #adding }
 OrderPreservingDictionary >> addAll: aKeyedCollection [
+	"This method can accept any collection of associations, not just Dictionaries, because is uses #associationsDo
+	rather than #keysAndValuesDo:, and #associationsDo: has a default implementation in Collection that just
+	sends #do:. Since this is an order-preserving dictionary, you should be able to add multiple associations
+	at once from a SequenceableCollection and have their order be preserved."
+
 	aKeyedCollection associationsDo: [:each | self add: each].
 	^ aKeyedCollection.
 ]
