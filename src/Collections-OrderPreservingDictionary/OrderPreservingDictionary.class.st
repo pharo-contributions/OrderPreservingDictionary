@@ -1,5 +1,5 @@
 "
-This class is a Dictionary that preserves the order of its aassociations. That means messages that return collections of keys, values or associations and messages that enumerate those collections all operate based on the order that the underlying associations were added to the receiver. Key insertion order is not, however, considered when comparing dictionaries for equality. As a result, instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Instances also return a configurable default value, which is nil by default, when an absent key or value is requirested from it rather than raising an exception. Other than those differences, this class can generally be used the same way Dictionary can.
+This class is a Dictionary that preserves the order of its aassociations. That means messages that return collections of keys, values or associations and messages that enumerate those collections all operate based on the order that the underlying associations were added to the receiver. Association order is not, however, considered when comparing dictionaries for equality. As a result, instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Instances also return a configurable default value, which is nil by default, when an absent key or value is requested from it rather than raising an exception. Other than those differences, this class can generally be used the same way Dictionary can.
 
 (This class is not a subclass of HashedCollection due to a belief that relying on the public API of Dictionary is probably a safer long-term bet than relying on the public and private API of a relatively recent addition to Squeak and Pharo.)
 "
@@ -59,10 +59,10 @@ OrderPreservingDictionary >> add: anAssociation [
 
 { #category : #adding }
 OrderPreservingDictionary >> addAll: aKeyedCollection [
-	"This method can accept any collection of associations, not just Dictionaries, because is uses #associationsDo
-	rather than #keysAndValuesDo:, and #associationsDo: has a default implementation in Collection that just
-	sends #do:. Since this is an order-preserving dictionary, you should be able to add multiple associations
-	at once from a SequenceableCollection and have their order be preserved."
+	"This method can accept any collection of associations, not just Dictionaries, because is uses
+	#associationsDo rather than #keysAndValuesDo:, and #associationsDo: has a default implementation in
+	Collection that just sends #do:. Since this is an order-preserving dictionary, you should be able to add
+	multiple associations at once from a SequenceableCollection and have their order be preserved."
 
 	aKeyedCollection associationsDo: [:each | self add: each].
 	^ aKeyedCollection.
@@ -82,12 +82,6 @@ OrderPreservingDictionary >> associationAt: aKey [
 { #category : #accessing }
 OrderPreservingDictionary >> associationAt: aKey ifAbsent: aBlock [
 	^ dictionary associationAt: aKey ifAbsent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> associationDeclareAt: aKey [
-	self addOrderedKeyIfAbsent: aKey.
-	^ dictionary associationDeclareAt: aKey.
 ]
 
 { #category : #accessing }
@@ -155,12 +149,6 @@ OrderPreservingDictionary >> copyEmpty [
 	^ self species defaultValue: defaultValue
 ]
 
-{ #category : #adding }
-OrderPreservingDictionary >> declare: aKey from: aDictionary [
-	self addOrderedKeyIfAbsent: aKey.
-	dictionary declare: aKey from: aDictionary.
-]
-
 { #category : #accessing }
 OrderPreservingDictionary >> defaultValue [
 	^ defaultValue
@@ -179,16 +167,6 @@ OrderPreservingDictionary >> dictionary [
 { #category : #enumerating }
 OrderPreservingDictionary >> do: aBlock [
 	self valuesDo: aBlock
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> doWithIndex: aTwoArgumentBlock [
-	| i |
-
-	i := 1.
-	self
-		do: [:each | aTwoArgumentBlock value: each value: i]
-		separatedBy: [i := i + 1].
 ]
 
 { #category : #testing }
@@ -329,11 +307,6 @@ OrderPreservingDictionary >> printNameOn: aStream [
 ]
 
 { #category : #removing }
-OrderPreservingDictionary >> remove: anObject [
-	self shouldNotImplement
-]
-
-{ #category : #removing }
 OrderPreservingDictionary >> remove: anObject ifAbsent: aBlock [
 	self shouldNotImplement
 ]
@@ -361,11 +334,6 @@ OrderPreservingDictionary >> removeOrderedKeyIfPresent: aKey [
 		ifTrue: [orderedKeys remove: aKey]
 ]
 
-{ #category : #removing }
-OrderPreservingDictionary >> removeUnreferencedKeys [
-	^ self unreferencedKeys collect: [:each | self removeKey: each. each]
-]
-
 { #category : #enumerating }
 OrderPreservingDictionary >> select: aBlock [
 	^ self species newFrom:
@@ -375,11 +343,6 @@ OrderPreservingDictionary >> select: aBlock [
 { #category : #accessing }
 OrderPreservingDictionary >> size [
 	^ dictionary size
-]
-
-{ #category : #removing }
-OrderPreservingDictionary >> unreferencedKeys [
-	^ dictionary unreferencedKeys
 ]
 
 { #category : #accessing }
