@@ -69,9 +69,9 @@ OrderPreservingDictionary >> addAll: aKeyedCollection [
 ]
 
 { #category : #private }
-OrderPreservingDictionary >> addOrderedKeyIfAbsent: aString [
-	(dictionary includesKey: aString)
-		ifFalse: [orderedKeys addLast: aString]
+OrderPreservingDictionary >> addOrderedKeyIfAbsent: aKey [
+	(dictionary includesKey: aKey)
+		ifFalse: [orderedKeys addLast: aKey]
 ]
 
 { #category : #accessing }
