@@ -109,7 +109,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 	
 	spec for: #common do: [
 		spec blessing: #baseline.
-		spec repository: 'http://smalltalkhub.com/mc/Pharo/OrderPreservingDictionary/main'.	
+		spec repository: 'http://smalltalkhub.com/mc/PharoExtras/OrderPreservingDictionary/main'.	
 		spec description: 'Imported from SqueakSource'.
 		spec package: 'Collections-OrderPreservingDictionary'.
 		spec 
