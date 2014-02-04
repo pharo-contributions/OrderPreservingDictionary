@@ -126,7 +126,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.0'
+	spec for: #'common' version: '1.1'
 
 ]
 
@@ -147,7 +147,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.0'.
+	spec for: #'common' version: '1.1'.
 	
 ]
 
@@ -160,6 +160,21 @@ ConfigurationOfOrderPreservingDictionary >> version100: spec [
 		spec description: 'Latest versions from Squeaksource'.
 		
 		spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-JAA.7'.
+		spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-JAAyer.7'
+		]
+	
+
+
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version110: spec [ 
+	<version: '1.1' imports: #('1.0-baseline') >
+	
+	spec for: #common do: [
+		spec blessing: #release.
+		
+		spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.9'.
 		spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-JAAyer.7'
 		]
 	
