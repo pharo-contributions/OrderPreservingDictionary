@@ -126,7 +126,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.1'
+	spec for: #'common' version: '1.0-baseline'.
 
 ]
 
@@ -147,8 +147,8 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.1'.
-	
+	spec for: #'common' version: '1.2'.
+
 ]
 
 { #category : #versions }
@@ -179,5 +179,20 @@ ConfigurationOfOrderPreservingDictionary >> version110: spec [
 		]
 	
 
+
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version12: spec [
+	<version: '1.2' imports: #('1.0-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 1.2'.
+		spec author: 'GuillaumeLarcheveque'.
+		spec timestamp: '6/27/2014 16:03'.
+		spec 
+			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.9';
+			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-JAAyer.7'. ].
 
 ]
