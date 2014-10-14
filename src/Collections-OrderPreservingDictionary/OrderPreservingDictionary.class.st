@@ -19,6 +19,11 @@ OrderPreservingDictionary class >> defaultValue: aDefaultValue [
 	^ self new defaultValue: aDefaultValue
 ]
 
+{ #category : #inspecting }
+OrderPreservingDictionary class >> inspectorClass [
+	^ Smalltalk at: #EyeDictionaryInspector
+]
+
 { #category : #'instance creation' }
 OrderPreservingDictionary class >> new [
 	^ self new: 10
@@ -53,8 +58,16 @@ OrderPreservingDictionary >> = anObject [
 
 { #category : #adding }
 OrderPreservingDictionary >> add: anAssociation [
-	self addOrderedKeyIfAbsent: anAssociation key.
-	^ dictionary add: anAssociation.
+	| oldSize newSize |
+
+	oldSize := dictionary size.
+	dictionary add: anAssociation.
+	(newSize := dictionary size) > oldSize
+		ifTrue: [
+			 newSize > orderedKeys size
+				ifTrue: [self growOrderedKeys].
+			orderedKeys at: newSize put: anAssociation key].
+	^ anAssociation.
 ]
 
 { #category : #adding }
@@ -66,12 +79,6 @@ OrderPreservingDictionary >> addAll: aKeyedCollection [
 
 	aKeyedCollection associationsDo: [:each | self add: each].
 	^ aKeyedCollection.
-]
-
-{ #category : #private }
-OrderPreservingDictionary >> addOrderedKeyIfAbsent: aKey [
-	(dictionary includesKey: aKey)
-		ifFalse: [orderedKeys addLast: aKey]
 ]
 
 { #category : #accessing }
@@ -127,9 +134,17 @@ OrderPreservingDictionary >> at: aKey ifPresent: aBlock [
 ]
 
 { #category : #accessing }
-OrderPreservingDictionary >> at: aKey put: aBlock [
-	self addOrderedKeyIfAbsent: aKey.
-	^ dictionary at: aKey put: aBlock.
+OrderPreservingDictionary >> at: aKey put: aValue [
+	| oldSize newSize |
+
+	oldSize := dictionary size.
+	dictionary at: aKey put: aValue.
+	(newSize := dictionary size) > oldSize
+		ifTrue: [
+			 newSize > orderedKeys size
+				ifTrue: [self growOrderedKeys].
+			orderedKeys at: newSize put: aKey].
+	^ aValue.
 ]
 
 { #category : #accessing }
@@ -169,6 +184,16 @@ OrderPreservingDictionary >> do: aBlock [
 	self valuesDo: aBlock
 ]
 
+{ #category : #private }
+OrderPreservingDictionary >> growOrderedKeys [
+	orderedKeys :=
+		(Array new: (dictionary capacity max: orderedKeys size + 5))
+			replaceFrom: 1
+			to: orderedKeys size
+			with: orderedKeys
+			startingAt: 1.
+]
+
 { #category : #testing }
 OrderPreservingDictionary >> hash [
 	^ dictionary hash
@@ -197,13 +222,8 @@ OrderPreservingDictionary >> includesKey: aKey [
 { #category : #initialization }
 OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
 	dictionary := Dictionary new: aCapacity.
-	orderedKeys := OrderedCollection new: aCapacity.
+	orderedKeys := Array new: aCapacity.
 	defaultValue := aDefaultValue.
-]
-
-{ #category : #inspecting }
-OrderPreservingDictionary >> inspectorClass [
-	^ EyeDictionaryInspector
 ]
 
 { #category : #testing }
@@ -238,7 +258,7 @@ OrderPreservingDictionary >> keyForIdentity: anObject [
 
 { #category : #accessing }
 OrderPreservingDictionary >> keys [
-	^ Array newFrom: orderedKeys
+	^ orderedKeys copyFrom: 1 to: self size
 ]
 
 { #category : #enumerating }
@@ -259,7 +279,7 @@ OrderPreservingDictionary >> keysAndValuesRemove: aTwoArgumentBlock [
 
 { #category : #enumerating }
 OrderPreservingDictionary >> keysDo: aBlock [
-	orderedKeys do: aBlock
+	1 to: self size do: [:i | aBlock value: (orderedKeys at: i)]
 ]
 
 { #category : #accessing }
@@ -275,6 +295,11 @@ OrderPreservingDictionary >> occurrencesOf: anObject [
 			each = anObject
 				ifTrue: [total + 1]
 				ifFalse: [total]]
+]
+
+{ #category : #private }
+OrderPreservingDictionary >> orderedKeys [
+	^ orderedKeys
 ]
 
 { #category : #copying }
@@ -313,7 +338,7 @@ OrderPreservingDictionary >> remove: anObject ifAbsent: aBlock [
 
 { #category : #removing }
 OrderPreservingDictionary >> removeAll [
-	orderedKeys removeAll.
+	orderedKeys copyEmpty.
 	dictionary removeAll.
 ]
 
@@ -324,14 +349,17 @@ OrderPreservingDictionary >> removeKey: aKey [
 
 { #category : #removing }
 OrderPreservingDictionary >> removeKey: aKey ifAbsent: aBlock [
-	self removeOrderedKeyIfPresent: aKey.
-	^ dictionary removeKey: aKey ifAbsent: aBlock.
-]
+	| value keyIndex |
 
-{ #category : #private }
-OrderPreservingDictionary >> removeOrderedKeyIfPresent: aKey [
-	(self includesKey: aKey)
-		ifTrue: [orderedKeys remove: aKey]
+	value := dictionary removeKey: aKey ifAbsent: [^ aBlock value].
+	keyIndex := orderedKeys indexOf: aKey.
+	[keyIndex <= orderedKeys size]
+		whileTrue: [
+			orderedKeys
+				at: keyIndex
+				put: (orderedKeys at:  keyIndex + 1ifAbsent: [nil]).
+			keyIndex := keyIndex + 1].
+	^ value.
 ]
 
 { #category : #enumerating }
