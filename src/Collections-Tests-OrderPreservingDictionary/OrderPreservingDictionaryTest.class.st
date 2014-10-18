@@ -18,19 +18,19 @@ OrderPreservingDictionaryTest >> absentValue [
 ]
 
 { #category : #assertions }
-OrderPreservingDictionaryTest >> assertDictionary: aDictionary commutativelyEquals: aSecondDictionary [
+OrderPreservingDictionaryTest >> assertDictionary: aDictionary doesNotEqual: aSecondDictionary [
+	self
+		deny: aDictionary = aSecondDictionary;
+		deny: aSecondDictionary = aDictionary
+]
+
+{ #category : #assertions }
+OrderPreservingDictionaryTest >> assertDictionary: aDictionary equals: aSecondDictionary [
 	self
 		assert: aDictionary = aDictionary;
 		assert: aSecondDictionary = aSecondDictionary;
 		assert: aDictionary = aSecondDictionary;
 		assert: aSecondDictionary = aDictionary
-]
-
-{ #category : #assertions }
-OrderPreservingDictionaryTest >> assertDictionary: aDictionary doesNotEqual: aSecondDictionary [
-	self
-		deny: aDictionary = aSecondDictionary;
-		deny: aSecondDictionary = aDictionary
 ]
 
 { #category : #assertions }
@@ -131,6 +131,16 @@ OrderPreservingDictionaryTest >> dictionaryWithSingleAssociation [
 { #category : #accessing }
 OrderPreservingDictionaryTest >> emptyDictionary [
 	^ self dictionaryClass new
+]
+
+{ #category : #accessing }
+OrderPreservingDictionaryTest >> internalDictionaryClass [
+	^ Dictionary
+]
+
+{ #category : #accessing }
+OrderPreservingDictionaryTest >> internalDictionaryWithAssociations [
+	^ self internalDictionaryClass newFrom: self dictionaryAssociations
 ]
 
 { #category : #accessing }
@@ -300,8 +310,8 @@ OrderPreservingDictionaryTest >> testAtIfPresent [
 			at: self singleKey
 			ifPresent: [:each |
 				each = self singleValue
-					ifTrue: [self singleValue]
-					ifFalse: [nil]]) = self singleValue.
+					ifTrue: [self newValue]
+					ifFalse: [nil]]) = self newValue.
 	self assert:
 		(dictionary
 			at: self absentKey
@@ -310,7 +320,7 @@ OrderPreservingDictionaryTest >> testAtIfPresent [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAtPut [
-	| dictionary keyToUpdate |
+	| dictionary keyToUpdate oldValue |
 
 	dictionary := self emptyDictionary.
 	self assert:
@@ -319,13 +329,15 @@ OrderPreservingDictionaryTest >> testAtPut [
 	self assert: dictionary associations = self dictionaryAssociations.
 
 	keyToUpdate := self dictionaryKeys anyOne.
+	oldValue := dictionary at: keyToUpdate.
 	self
 		assert: (dictionary at: keyToUpdate put: self newValue) = self newValue;
+		assert: (dictionary at: keyToUpdate) = self newValue;
 		assert:
 			(dictionary associations =
 				(self dictionaryAssociations collect: [:each |
-					each key = keyToUpdate
-						ifTrue: [keyToUpdate -> self newValue]
+					(each value = oldValue)
+						ifTrue: [each key -> self newValue]
 						ifFalse: [each]])).
 ]
 
@@ -403,27 +415,21 @@ OrderPreservingDictionaryTest >> testEquals [
 
 	dictionaryOne := self emptyDictionary.
 	dictionaryTwo := self emptyDictionary.
-	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
-
-	dictionaryOne add: self dictionaryAssociations first.
-	dictionaryTwo add: self dictionaryAssociations first. 
-	self
-		assertDictionary: dictionaryOne doesNotEqual: self emptyDictionary;
-		assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
+	self assertDictionary: dictionaryOne equals: dictionaryTwo.
 
 	"For equality, order will not matter"
-	dictionaryOne add: self dictionaryAssociations second.
-	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryTwo add: self dictionaryAssociations third.
-	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryOne add: self dictionaryAssociations third.
-	self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo.
-	dictionaryTwo add: self dictionaryAssociations second.
-	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
+	self dictionaryAssociations
+		with: self dictionaryAssociations reversed
+		do: [:firstAssociation :secondAssociation |
+			dictionaryOne add: firstAssociation.
+			dictionaryTwo add: secondAssociation.
+			self
+				assertDictionary: dictionaryOne doesNotEqual: self emptyDictionary;
+				assertDictionary: dictionaryTwo doesNotEqual: self emptyDictionary.
+			dictionaryOne size < self dictionaryAssociations size
+				ifTrue: [self assertDictionary: dictionaryOne doesNotEqual: dictionaryTwo]].
 
-	dictionaryOne addAll: (self dictionaryAssociations allButFirst: 3).
-	dictionaryTwo addAll: (self dictionaryAssociations allButFirst: 3).
-	self assertDictionary: dictionaryOne commutativelyEquals: dictionaryTwo.
+	self assertDictionary: dictionaryOne equals: dictionaryTwo.
 ]
 
 { #category : #tests }
@@ -432,18 +438,18 @@ OrderPreservingDictionaryTest >> testEqualsDictionary [
 
 	"Comparisons with Dictionaries that contain the same associations should work too"
 	orderedDictionary := self emptyDictionary.
-	unorderedDictionary := Dictionary new.
-	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
+	unorderedDictionary := self internalDictionaryClass new.
+	self assertDictionary: orderedDictionary equals: unorderedDictionary.
 
 	orderedDictionary addAll: self dictionaryAssociations.
 	self assertDictionary: orderedDictionary doesNotEqual: unorderedDictionary.
 	
 	"Dictionary>>addAll: can only accept keyed collections as an argument, so newFrom: is
 	used instead."
-	unorderedDictionary := Dictionary newFrom: self dictionaryAssociations.
-	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
-	unorderedDictionary := Dictionary newFrom: self dictionaryAssociations reversed.
-	self assertDictionary: orderedDictionary commutativelyEquals: unorderedDictionary.
+	unorderedDictionary := self internalDictionaryWithAssociations.
+	self assertDictionary: orderedDictionary equals: unorderedDictionary.
+	unorderedDictionary := self internalDictionaryClass newFrom: self dictionaryAssociations reversed.
+	self assertDictionary: orderedDictionary equals: unorderedDictionary.
 ]
 
 { #category : #tests }
@@ -618,7 +624,7 @@ OrderPreservingDictionaryTest >> testNewFrom [
 	
 	dictionaryOne := self dictionaryClass newFrom: self dictionaryAssociations.
 	dictionaryTwo := self dictionaryClass newFrom: dictionaryOne.
-	dictionaryThree := self dictionaryClass newFrom: (Dictionary newFrom: self dictionaryAssociations).
+	dictionaryThree := self dictionaryClass newFrom: self internalDictionaryWithAssociations.
 
 	self
 		assertIsDictionary: dictionaryOne withAssociations: self dictionaryAssociations;
@@ -658,9 +664,10 @@ OrderPreservingDictionaryTest >> testRemoveKey [
 	dictionary defaultValue: self defaultValue.
 	self
 		assert: (dictionary removeKey: self absentKey) = self defaultValue;
-		assert: (dictionary removeKey: self singleKey) = self singleValue;
-		deny: (dictionary includesKey: self singleKey);
-		assert: dictionary keys = (self dictionaryKeys copyWithout: self singleKey).
+		assert: (dictionary removeKey: self dictionaryKeys first) = self dictionaryValues first;
+		deny: (dictionary includesKey: self dictionaryKeys first).
+
+	self assert: dictionary keys = self dictionaryKeys allButFirst.
 ]
 
 { #category : #tests }
