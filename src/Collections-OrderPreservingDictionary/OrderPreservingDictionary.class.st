@@ -179,6 +179,11 @@ OrderPreservingDictionary >> dictionary [
 	^ dictionary
 ]
 
+{ #category : #accessing }
+OrderPreservingDictionary >> dictionaryClass [
+	^ Dictionary
+]
+
 { #category : #enumerating }
 OrderPreservingDictionary >> do: aBlock [
 	self valuesDo: aBlock
@@ -221,7 +226,7 @@ OrderPreservingDictionary >> includesKey: aKey [
 
 { #category : #initialization }
 OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
-	dictionary := Dictionary new: aCapacity.
+	dictionary := self dictionaryClass new: aCapacity.
 	orderedKeys := Array new: aCapacity.
 	defaultValue := aDefaultValue.
 ]
@@ -371,6 +376,11 @@ OrderPreservingDictionary >> select: aBlock [
 { #category : #accessing }
 OrderPreservingDictionary >> size [
 	^ dictionary size
+]
+
+{ #category : #private }
+OrderPreservingDictionary >> species [
+	^ self class
 ]
 
 { #category : #accessing }
