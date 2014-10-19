@@ -92,6 +92,11 @@ OrderPreservingDictionary >> associationAt: aKey ifAbsent: aBlock [
 ]
 
 { #category : #accessing }
+OrderPreservingDictionary >> associationAt: aKey ifPresent: aBlock [ 
+	^ dictionary associationAt: aKey ifPresent: aBlock
+]
+
+{ #category : #accessing }
 OrderPreservingDictionary >> associations [
 	| associations i |
 
@@ -131,6 +136,14 @@ OrderPreservingDictionary >> at: aKey ifAbsentPut: aBlock [
 { #category : #accessing }
 OrderPreservingDictionary >> at: aKey ifPresent: aBlock [
 	^ dictionary at: aKey ifPresent: aBlock
+]
+
+{ #category : #accessing }
+OrderPreservingDictionary >> at: aKey ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
+	^ dictionary
+		at: aKey
+		ifPresent: aPresentBlock
+		ifAbsent: anAbsentBlock
 ]
 
 { #category : #accessing }
