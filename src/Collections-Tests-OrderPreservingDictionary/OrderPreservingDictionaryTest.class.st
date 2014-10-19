@@ -240,6 +240,16 @@ OrderPreservingDictionaryTest >> testAssociationAtIfAbsent [
 ]
 
 { #category : #tests }
+OrderPreservingDictionaryTest >> testAssociationAtIfPresent [
+	| dictionary |
+
+	dictionary := self dictionaryWithSingleAssociation.
+	self
+		assert: (dictionary associationAt: self absentKey ifPresent: [self absentValue]) isNil;
+		assert: (dictionary associationAt: self singleKey ifPresent: [self newValue]) = self newValue.
+]
+
+{ #category : #tests }
 OrderPreservingDictionaryTest >> testAssociations [
 	self
 		assertSelector: #associations
@@ -316,6 +326,26 @@ OrderPreservingDictionaryTest >> testAtIfPresent [
 		(dictionary
 			at: self absentKey
 			ifPresent: [:each | self signalFailure: 'Block should not have been evaluated']) isNil.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testAtIfPresentIfAbsent [
+	| dictionary |
+
+	dictionary := self dictionaryWithSingleAssociation.
+	self assert:
+		(dictionary
+			at: self singleKey
+			ifPresent: [:value |
+				value = self singleValue
+					ifTrue: [self newValue]
+					ifFalse: [nil]]
+			ifAbsent: [self signalFailure: 'Block should not have been evaluated']) = self newValue.
+	self assert:
+		(dictionary
+			at: self absentKey
+			ifPresent: [self signalFailure: 'Block should not have been evaluated']
+			ifAbsent: [self newValue]) = self newValue.
 ]
 
 { #category : #tests }
