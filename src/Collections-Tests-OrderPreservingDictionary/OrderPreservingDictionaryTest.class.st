@@ -512,13 +512,19 @@ OrderPreservingDictionaryTest >> testIncludesIdentity [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testIncludesKey [
-	| dictionary |
+	| dictionary associations |
 
 	dictionary := self emptyDictionary.
 	self deny: (self dictionaryKeys anySatisfy: [:each | dictionary includesKey: each]).
 
-	dictionary addAll: self dictionaryAssociations.
-	self assert: (self dictionaryKeys allSatisfy: [:each | dictionary includesKey: each]).
+	associations := self dictionaryAssociations asOrderedCollection.
+	[associations notEmpty]
+		whileTrue: [| addedAssociation |
+			addedAssociation := dictionary add: associations removeFirst.
+			self assert: (dictionary includesKey: addedAssociation key).
+
+			associations do: [:each |
+				self deny: (dictionary includesKey: each key)]].
 ]
 
 { #category : #tests }
@@ -658,16 +664,21 @@ OrderPreservingDictionaryTest >> testRemoveAll [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testRemoveKey [
-	| dictionary |
+	| dictionary removedKey keys |
 
 	dictionary := self dictionaryWithAssociations.
-	dictionary defaultValue: self defaultValue.
-	self
-		assert: (dictionary removeKey: self absentKey) = self defaultValue;
-		assert: (dictionary removeKey: self dictionaryKeys first) = self dictionaryValues first;
-		deny: (dictionary includesKey: self dictionaryKeys first).
 
-	self assert: dictionary keys = self dictionaryKeys allButFirst.
+	dictionary defaultValue: self defaultValue.
+	self assert: (dictionary removeKey: self absentKey) = self defaultValue.
+
+	keys := dictionary keys asOrderedCollection.
+	removedKey := keys removeAt: 2.
+	self
+		assert: (dictionary removeKey: removedKey) = self dictionaryValues second;
+		assert: (dictionary removeKey: removedKey) = self defaultValue;
+		deny: (dictionary includesKey: removedKey);
+		deny: (dictionary keys identityIncludes: removedKey);
+		assert: dictionary keys = keys asArray.
 ]
 
 { #category : #tests }
