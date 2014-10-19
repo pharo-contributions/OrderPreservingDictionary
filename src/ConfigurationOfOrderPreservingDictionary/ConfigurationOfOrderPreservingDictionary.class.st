@@ -216,7 +216,7 @@ ConfigurationOfOrderPreservingDictionary >> version122: spec [
 	spec for: #'common' do: [
 		spec blessing: #'stable'.
 		spec 
-			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.11';
-			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.8'. ].
+			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.12';
+			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.9'. ].
 
 ]
