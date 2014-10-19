@@ -224,6 +224,11 @@ OrderPreservingDictionary >> includesKey: aKey [
 	^ dictionary includesKey: aKey
 ]
 
+{ #category : #private }
+OrderPreservingDictionary >> indexOfKey: aKey [
+	^ orderedKeys indexOf: aKey
+]
+
 { #category : #initialization }
 OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
 	dictionary := self dictionaryClass new: aCapacity.
@@ -357,12 +362,12 @@ OrderPreservingDictionary >> removeKey: aKey ifAbsent: aBlock [
 	| value keyIndex |
 
 	value := dictionary removeKey: aKey ifAbsent: [^ aBlock value].
-	keyIndex := orderedKeys indexOf: aKey.
+	keyIndex := self indexOfKey: aKey.
 	[keyIndex <= orderedKeys size]
 		whileTrue: [
 			orderedKeys
 				at: keyIndex
-				put: (orderedKeys at:  keyIndex + 1ifAbsent: [nil]).
+				put: (orderedKeys at:  keyIndex + 1 ifAbsent: [nil]).
 			keyIndex := keyIndex + 1].
 	^ value.
 ]

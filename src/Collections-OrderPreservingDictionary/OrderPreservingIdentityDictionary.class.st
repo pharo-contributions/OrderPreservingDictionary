@@ -11,3 +11,8 @@ Class {
 OrderPreservingIdentityDictionary >> dictionaryClass [
 	^ IdentityDictionary
 ]
+
+{ #category : #private }
+OrderPreservingIdentityDictionary >> indexOfKey: aKey [
+	^ orderedKeys identityIndexOf: aKey
+]
