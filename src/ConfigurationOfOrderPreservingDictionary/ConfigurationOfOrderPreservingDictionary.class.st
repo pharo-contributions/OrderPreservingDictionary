@@ -240,7 +240,7 @@ ConfigurationOfOrderPreservingDictionary >> version124: spec [
 	spec for: #'common' do: [
 		spec blessing: #'stable'.
 		spec 
-			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.14';
+			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.15';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.10'. ].
 
 ]
