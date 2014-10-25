@@ -147,7 +147,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.2.3'.
+	spec for: #'common' version: '1.2.4'.
 
 ]
 
@@ -229,6 +229,18 @@ ConfigurationOfOrderPreservingDictionary >> version123: spec [
 		spec blessing: #'stable'.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.13';
+			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.10'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version124: spec [
+	<version: '1.2.4' imports: #('1.0-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec 
+			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.14';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.10'. ].
 
 ]
