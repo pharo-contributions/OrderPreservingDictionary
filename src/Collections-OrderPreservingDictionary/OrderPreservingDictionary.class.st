@@ -21,7 +21,7 @@ OrderPreservingDictionary class >> defaultValue: aDefaultValue [
 
 { #category : #inspecting }
 OrderPreservingDictionary class >> inspectorClass [
-	^ Smalltalk at: #EyeDictionaryInspector
+	^ Dictionary inspectorClass
 ]
 
 { #category : #'instance creation' }
