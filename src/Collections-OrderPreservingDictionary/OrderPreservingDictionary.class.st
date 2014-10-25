@@ -52,8 +52,16 @@ OrderPreservingDictionary class >> newFrom: aDictionaryOrArray [
 
 { #category : #comparing }
 OrderPreservingDictionary >> = anObject [
-	^ self == anObject
-		or: [anObject isDictionary and: [dictionary = anObject]]
+	self == anObject
+		ifTrue: [^ true].
+
+	(anObject isDictionary and: [anObject size = self size])
+		ifFalse: [^ false].
+
+	dictionary associationsDo: [:each |
+		(anObject at: each key ifAbsent: [^ false]) = each value
+			ifFalse: [^ false]].
+	^ true.
 ]
 
 { #category : #adding }
@@ -92,8 +100,9 @@ OrderPreservingDictionary >> associationAt: aKey ifAbsent: aBlock [
 ]
 
 { #category : #accessing }
-OrderPreservingDictionary >> associationAt: aKey ifPresent: aBlock [ 
-	^ dictionary associationAt: aKey ifPresent: aBlock
+OrderPreservingDictionary >> associationAt: aKey ifPresent: aBlock [
+	"for portability"
+	^ aBlock cull: (dictionary associationAt: aKey ifAbsent: [^ nil])
 ]
 
 { #category : #accessing }
@@ -212,7 +221,7 @@ OrderPreservingDictionary >> growOrderedKeys [
 			startingAt: 1.
 ]
 
-{ #category : #testing }
+{ #category : #comparing }
 OrderPreservingDictionary >> hash [
 	^ dictionary hash
 ]
