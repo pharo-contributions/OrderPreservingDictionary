@@ -12,7 +12,7 @@ OrderPreservingIdentityDictionary >> dictionaryClass [
 	^ IdentityDictionary
 ]
 
-{ #category : #private }
-OrderPreservingIdentityDictionary >> indexOfKey: aKey [
-	^ orderedKeys identityIndexOf: aKey
+{ #category : #accessing }
+OrderPreservingIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
+	^ orderedKeys identityIndexOf: aKey ifAbsent: aBlock
 ]

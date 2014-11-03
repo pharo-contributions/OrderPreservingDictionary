@@ -101,7 +101,7 @@ OrderPreservingDictionary >> associationAt: aKey ifAbsent: aBlock [
 
 { #category : #accessing }
 OrderPreservingDictionary >> associationAt: aKey ifPresent: aBlock [
-	"for portability"
+	"squeak does not have associationAt:ifPresent:"
 	^ aBlock cull: (dictionary associationAt: aKey ifAbsent: [^ nil])
 ]
 
@@ -246,9 +246,14 @@ OrderPreservingDictionary >> includesKey: aKey [
 	^ dictionary includesKey: aKey
 ]
 
-{ #category : #private }
+{ #category : #accessing }
 OrderPreservingDictionary >> indexOfKey: aKey [
-	^ orderedKeys indexOf: aKey
+	^ self indexOfKey: aKey ifAbsent: [0]
+]
+
+{ #category : #accessing }
+OrderPreservingDictionary >> indexOfKey: aKey ifAbsent: aBlock [
+	^ orderedKeys indexOf: aKey ifAbsent: aBlock
 ]
 
 { #category : #initialization }
@@ -271,6 +276,18 @@ OrderPreservingDictionary >> keyAtIdentityValue: aValue [
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
 	^ dictionary keyAtIdentityValue: aValue ifAbsent: aBlock
+]
+
+{ #category : #accessing }
+OrderPreservingDictionary >> keyAtIndex: anIndex [
+	^ self keyAtIndex: anIndex ifAbsent: [defaultValue]
+]
+
+{ #category : #accessing }
+OrderPreservingDictionary >> keyAtIndex: anIndex ifAbsent: aBlock [
+	(anIndex >= 1 and: [anIndex <= self size])
+		ifTrue: [^ orderedKeys at: anIndex]
+		ifFalse: [^ aBlock value]
 ]
 
 { #category : #accessing }
