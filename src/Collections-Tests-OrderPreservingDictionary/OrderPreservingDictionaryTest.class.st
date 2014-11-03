@@ -4,6 +4,9 @@ This class tests the OrderPreservingDictionary class using an empty dictionary, 
 Class {
 	#name : #OrderPreservingDictionaryTest,
 	#superclass : #TestCase,
+	#instVars : [
+		'associations'
+	],
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
 
@@ -94,13 +97,17 @@ OrderPreservingDictionaryTest >> defaultValue [
 
 { #category : #accessing }
 OrderPreservingDictionaryTest >> dictionaryAssociations [
-	"Associations are grouped out of their natural sort order"
-
-	^ Array
-		with: 'testKey'->'testValue'
-		with: 'testKey3'->'testValue3'
-		with: 'testKey2'->'testValue2'
-		with: 'testKey4'->'testValue4'
+	"Associations are grouped out of their natural sort order and
+	are copied so can be modified in one test without affecting others,
+	but the keys and values are identical each time for identity tests."
+	associations ifNil: [
+		associations :=
+		Array
+			with: 'testKey'->'testValue'
+			with: 'testKey3'->'testValue3'
+			with: 'testKey2'->'testValue2'
+			with: 'testKey4'->'testValue4'].
+	^ associations collect: [:each | each copy].
 ]
 
 { #category : #accessing }
@@ -558,6 +565,30 @@ OrderPreservingDictionaryTest >> testIncludesKey [
 ]
 
 { #category : #tests }
+OrderPreservingDictionaryTest >> testIndexOfKey [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
+	dictionary keys withIndexDo: [:each :i |
+		self assert: (dictionary indexOfKey: each) = i].
+	self assert: (dictionary indexOfKey: self absentKey) isZero.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testIndexOfKeyIfAbsent [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
+	dictionary keys withIndexDo: [:each :i |
+		self assert: (dictionary indexOfKey: each ifAbsent: [self newValue]) = i].
+
+	self assert:
+		(dictionary
+			indexOfKey: self absentKey
+			ifAbsent: [self newValue]) = self newValue.
+]
+
+{ #category : #tests }
 OrderPreservingDictionaryTest >> testIsDictionary [
 	self assert: self dictionaryClass new isDictionary
 ]
@@ -585,6 +616,47 @@ OrderPreservingDictionaryTest >> testKeyAtIdentityValueIfAbsent [
 		assert: (dictionary keyAtIdentityValue: self absentValue ifAbsent: [self absentKey]) = self absentKey;
 		assert: (dictionary keyAtIdentityValue: value copy ifAbsent: [self absentKey]) = self absentKey;
 		assert: (dictionary keyAtValue: value) = self singleKey.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testKeyAtIndex [
+	| dictionary |
+
+	(dictionary := self emptyDictionary)
+		defaultValue: self defaultValue.
+	self
+		assert: (dictionary keyAtIndex: 0) = self defaultValue;
+		assert: (dictionary keyAtIndex: 1) = self defaultValue.
+
+	(dictionary := self dictionaryWithAssociations)
+		defaultValue: self defaultValue.
+	self dictionaryKeys withIndexDo: [:each :i |
+		self assert: (dictionary keyAtIndex: i) = each].
+	self
+		assert: (dictionary keyAtIndex: 0) = self defaultValue;
+		assert: (dictionary keyAtIndex: dictionary size + 1) = self defaultValue.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testKeyAtIndexIfAbsent [
+	| dictionary |
+
+	dictionary := self emptyDictionary.
+	self
+		assert: (dictionary keyAtIndex: 0 ifAbsent: [self newKey]) = self newKey;
+		assert: (dictionary keyAtIndex: 1 ifAbsent: [self newKey]) = self newKey.
+
+	dictionary := self dictionaryWithAssociations.
+	self dictionaryKeys withIndexDo: [:each :i |
+		self assert: (dictionary keyAtIndex: i ifAbsent: [self newKey]) = each].
+	self assert:
+		(dictionary
+			keyAtIndex: 0
+			ifAbsent: [self newKey]) = self newKey.
+	self assert:
+			(dictionary
+				keyAtIndex: dictionary size + 1
+				ifAbsent: [self newKey]) = self newKey.
 ]
 
 { #category : #tests }

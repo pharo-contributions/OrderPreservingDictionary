@@ -1,9 +1,6 @@
 Class {
 	#name : #OrderPreservingIdentityDictionaryTest,
 	#superclass : #OrderPreservingDictionaryTest,
-	#instVars : [
-		'identityAssociations'
-	],
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
 
@@ -13,15 +10,24 @@ OrderPreservingIdentityDictionaryTest class >> shouldInheritSelectors [
 ]
 
 { #category : #accessing }
+OrderPreservingIdentityDictionaryTest >> absentKey [
+	^ self singleKey copy
+]
+
+{ #category : #accessing }
 OrderPreservingIdentityDictionaryTest >> dictionaryAssociations [
-	identityAssociations
+	"associations are copied so can be modified in one test without affecting others,
+	but the keys and values are identical each time for identity tests."
+	associations
 		ifNil: [| key |
 			key := 'testKey'.
-			identityAssociations :=
-				(#('testValue' 'testValue3' 'testValue2' 'testValue4') collect: [:each |
-					(key := key copy) -> each])].
-
-	^ identityAssociations collect: [:each | each copy].
+			associations :=
+				Array
+					with: (key := key copy) -> 'testValue'
+					with: (key := key copy) -> 'testValue3'
+					with: (key := key copy) -> 'testValue2'
+					with: (key := key copy) -> 'testValue4'].
+	^ associations collect: [:each | each copy].
 ]
 
 { #category : #accessing }
