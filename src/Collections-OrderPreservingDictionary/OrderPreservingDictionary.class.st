@@ -351,16 +351,6 @@ OrderPreservingDictionary >> keysSortedSafely [
 	^ dictionary keysSortedSafely
 ]
 
-{ #category : #testing }
-OrderPreservingDictionary >> occurrencesOf: anObject [
-	^ self values
-		inject: 0
-		into: [:total :each |
-			each = anObject
-				ifTrue: [total + 1]
-				ifFalse: [total]]
-]
-
 { #category : #private }
 OrderPreservingDictionary >> orderedKeys [
 	^ orderedKeys
