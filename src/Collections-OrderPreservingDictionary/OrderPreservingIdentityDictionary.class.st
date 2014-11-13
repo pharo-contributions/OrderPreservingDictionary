@@ -14,5 +14,8 @@ OrderPreservingIdentityDictionary >> dictionaryClass [
 
 { #category : #accessing }
 OrderPreservingIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
-	^ orderedKeys identityIndexOf: aKey ifAbsent: aBlock
+	1 to: self size do: [:i |
+		(orderedKeys at: i) == aKey
+			ifTrue: [^ i]].
+	^ aBlock value.
 ]
