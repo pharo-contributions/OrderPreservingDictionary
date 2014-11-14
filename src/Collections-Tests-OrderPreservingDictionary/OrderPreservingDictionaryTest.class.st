@@ -273,7 +273,7 @@ OrderPreservingDictionaryTest >> testAssociationsDo [
 ]
 
 { #category : #tests }
-OrderPreservingDictionaryTest >> testAssociationsSelelct [
+OrderPreservingDictionaryTest >> testAssociationsSelect [
 	| dictionary selectedAssociations rejectedAssociation |
 
 	rejectedAssociation := self dictionaryAssociations anyOne.
@@ -283,7 +283,15 @@ OrderPreservingDictionaryTest >> testAssociationsSelelct [
 			associationsSelect: [:each | each ~= rejectedAssociation].
 	self
 		assertIsDictionary: dictionary withAssociations: selectedAssociations;
-		deny: (dictionary includesAssociation: rejectedAssociation)
+		deny: (dictionary includesAssociation: rejectedAssociation).
+
+	(dictionary associationsSelect: [:each | true])
+		at: selectedAssociations anyOne key
+		put: self newValue.
+	self assertIsDictionary: dictionary withAssociations: selectedAssociations.
+
+	dictionary defaultValue: self defaultValue.
+	self assert: (dictionary associationsSelect: [:each | true]) defaultValue = self defaultValue.
 ]
 
 { #category : #tests }
@@ -406,27 +414,48 @@ OrderPreservingDictionaryTest >> testCapacity [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCollect [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
 	self
-		assertIsDictionary:
-			(self dictionaryWithAssociations collect: [:each | self newValue])
+		assertIsDictionary: (dictionary collect: [:each | self newValue])
 		withAssociations:
-			(self dictionaryAssociations collect: [:each | each value: self newValue])
+			(self dictionaryAssociations collect: [:each | each value: self newValue]).
+	
+	dictionary defaultValue: self defaultValue.
+	self assert: (dictionary collect: [:each | each]) defaultValue = self defaultValue.
 ]
 
 { #category : #tests }
-OrderPreservingDictionaryTest >> testCopying [
+OrderPreservingDictionaryTest >> testCopy [
 	| dictionary copy |
 
-	dictionary := self dictionaryWithAssociations.
+	(dictionary := self dictionaryWithAssociations)
+		defaultValue: self defaultValue.
 	copy := dictionary copy.
 	self
-		assert: dictionary = copy;
-		deny: dictionary == copy.
+		assertDictionary: dictionary equals: copy;
+		deny: dictionary == copy;
+		deny: dictionary dictionary == copy dictionary;
+		deny: dictionary orderedKeys == copy orderedKeys;
+		assert: copy defaultValue = dictionary defaultValue.
 
+	dictionary at: self singleKey put: self newValue.
+	self deny: (copy at: self singleKey) = self newValue.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testCopyEmpty [
+	| dictionary copy |
+
+	(dictionary := self dictionaryWithAssociations)
+		defaultValue: self defaultValue.
 	copy := dictionary copyEmpty.
 	self
-		deny: dictionary = copy;
-		assert: copy isEmpty.
+		assertDictionary: dictionary doesNotEqual: copy;
+		assert: copy isEmpty;
+		deny: dictionary isEmpty;
+		assert: copy defaultValue = self defaultValue.
 ]
 
 { #category : #tests }
@@ -721,6 +750,22 @@ OrderPreservingDictionaryTest >> testKeysAndValuesDo [
 ]
 
 { #category : #tests }
+OrderPreservingDictionaryTest >> testKeysAndValuesRemove [
+	| dictionary keys |
+
+	dictionary := self dictionaryWithAssociations.
+	keys := self dictionaryKeys.
+	dictionary keysAndValuesRemove: [:key :value | keys first = key or: [keys third = key]].
+
+	self
+		deny: (dictionary includesKey: keys first);
+		deny: (dictionary includesKey: keys third);
+		assert:
+			(((keys copyWithout: keys first) copyWithout: keys third)
+				allSatisfy: [:each | dictionary includesKey: each]).
+]
+
+{ #category : #tests }
 OrderPreservingDictionaryTest >> testKeysDo [
 	self
 		assertSelector: #keysDo:
@@ -741,14 +786,39 @@ OrderPreservingDictionaryTest >> testKeysSortedSafely [
 OrderPreservingDictionaryTest >> testNewFrom [
 	| dictionaryOne dictionaryTwo dictionaryThree |
 	
-	dictionaryOne := self dictionaryClass newFrom: self dictionaryAssociations.
+	(dictionaryOne := self dictionaryClass newFrom: self dictionaryAssociations)
+		defaultValue: self defaultValue.
 	dictionaryTwo := self dictionaryClass newFrom: dictionaryOne.
 	dictionaryThree := self dictionaryClass newFrom: self internalDictionaryWithAssociations.
-
 	self
 		assertIsDictionary: dictionaryOne withAssociations: self dictionaryAssociations;
+		assert: dictionaryOne defaultValue = self defaultValue;
 		assertIsDictionary: dictionaryTwo withAssociations: self dictionaryAssociations;
-		assertIsDictionary: dictionaryThree includesAll: self dictionaryAssociations.
+		assert: dictionaryTwo defaultValue = self defaultValue;
+		assertIsDictionary: dictionaryThree includesAll: self dictionaryAssociations;
+		deny: dictionaryThree defaultValue = self defaultValue.
+
+	(self dictionaryClass newFrom: dictionaryOne)
+		at: self singleKey put: self newValue.
+	self deny: (dictionaryOne at: self singleKey) = self newValue.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testNewFromPairs [
+	| pairs |
+
+	pairs := OrderedCollection new.
+	self dictionaryAssociations do: [:each |
+		pairs
+			add: each key;
+			add: each value].
+	0 to: pairs size do: [:i |
+		self
+			assertDictionary:
+				(self dictionaryClass newFromPairs: (pairs copyFrom: 1 to: i))
+			equals:
+				(self dictionaryClass newFrom:
+					(self dictionaryAssociations copyFrom: 1 to: (i / 2) floor))].
 ]
 
 { #category : #tests }
@@ -783,9 +853,8 @@ OrderPreservingDictionaryTest >> testRemoveAll [
 OrderPreservingDictionaryTest >> testRemoveKey [
 	| dictionary associationsToRemove |
 
-	dictionary := self dictionaryWithAssociations.
-
-	dictionary defaultValue: self defaultValue.
+	(dictionary := self dictionaryWithAssociations)
+		defaultValue: self defaultValue.
 	self assert: (dictionary removeKey: self absentKey) = self defaultValue.
 	associationsToRemove := self dictionaryAssociations asOrderedCollection.
 	[associationsToRemove notEmpty]
@@ -813,11 +882,18 @@ OrderPreservingDictionaryTest >> testRemoveKeyIfAbsent [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testSelect [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
 	self
-		assertIsDictionary:
-			(self dictionaryWithAssociations select: [:each | each ~= self singleValue])
-		withAssociations:
-			(self dictionaryAssociations copyWithout: self singleAssociation)
+		assertIsDictionary: (dictionary select: [:each | each ~= self singleValue])
+		withAssociations: (self dictionaryAssociations copyWithout: self singleAssociation).
+
+	(dictionary select: [:each | true]) at: self singleKey put: self newValue.
+	self deny: (dictionary at: self singleKey) = self newValue.
+
+	dictionary defaultValue: self defaultValue.
+	self assert: (dictionary select: [:each | true]) defaultValue = self defaultValue.
 ]
 
 { #category : #tests }
@@ -850,20 +926,4 @@ OrderPreservingDictionaryTest >> testValuesDo [
 		assertSelector: #valuesDo:
 		enumerates: self dictionaryValues
 		from: self dictionaryWithAssociations
-]
-
-{ #category : #tests }
-OrderPreservingDictionaryTest >> testsKeysAndValuesRemove [
-	| dictionary keys |
-
-	dictionary := self dictionaryWithAssociations.
-	keys := self dictionaryKeys.
-	dictionary keysAndValuesRemove: [:key :value | keys first = key or: [keys third = key]].
-
-	self
-		deny: (dictionary includesKey: keys first);
-		deny: (dictionary includesKey: keys third);
-		assert:
-			(((keys copyWithout: keys first) copyWithout: keys third)
-				allSatisfy: [:each | dictionary includesKey: each]).
 ]
