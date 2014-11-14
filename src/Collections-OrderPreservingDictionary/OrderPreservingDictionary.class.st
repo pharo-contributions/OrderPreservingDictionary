@@ -44,7 +44,10 @@ OrderPreservingDictionary class >> newFrom: anAssociationCollection [
 	| newDictionary |
 
 	newDictionary := self new: anAssociationCollection size.
-	anAssociationCollection associationsDo: [:each | newDictionary add: each].
+	anAssociationCollection associationsDo: [:each |
+		newDictionary
+			at: each key
+			put: each value].
 	(anAssociationCollection respondsTo: #defaultValue)
 		ifTrue: [newDictionary defaultValue: anAssociationCollection defaultValue].
 	^ newDictionary.
@@ -54,7 +57,7 @@ OrderPreservingDictionary class >> newFrom: anAssociationCollection [
 OrderPreservingDictionary class >> newFromPairs: aSequenceableCollection [
 	| newDictionary |
 
-	newDictionary := self new: (aSequenceableCollection size / 2) asInteger.
+	newDictionary := self new: (aSequenceableCollection size / 2) floor.
 	1 to: aSequenceableCollection size - 1 by: 2 do: [:i |
 		newDictionary
 			at: (aSequenceableCollection at: i)
@@ -136,7 +139,7 @@ OrderPreservingDictionary >> associationsDo: aBlock [
 
 { #category : #enumerating }
 OrderPreservingDictionary >> associationsSelect: aBlock [
-	^ self species newFrom: (self associations select: aBlock)
+	^ self speciesNewFrom: (self associations select: aBlock)
 ]
 
 { #category : #accessing }
@@ -188,7 +191,7 @@ OrderPreservingDictionary >> capacity [
 
 { #category : #enumerating }
 OrderPreservingDictionary >> collect: aBlock [
-	^ self species newFrom:
+	^ self speciesNewFrom:
 		(self associations collect: [:each |
 			each key -> (aBlock value: each value)])
 ]
@@ -406,16 +409,18 @@ OrderPreservingDictionary >> removeKey: aKey ifAbsent: aBlock [
 	| keyIndex |
 
 	keyIndex := self indexOfKey: aKey ifAbsent: [^ aBlock value].
-	keyIndex to: self size do: [:i |
-		orderedKeys
-			at: i
-			put: (orderedKeys at: i + 1 ifAbsent: [nil])].
+	orderedKeys
+		replaceFrom: keyIndex
+		to: self size - 1
+		with: orderedKeys
+		startingAt: keyIndex + 1.
+	orderedKeys at: self size put: nil.
 	^ dictionary removeKey: aKey.
 ]
 
 { #category : #enumerating }
 OrderPreservingDictionary >> select: aBlock [
-	^ self species newFrom:
+	^ self speciesNewFrom:
 		(self associations select: [:each | aBlock value: each value])
 ]
 
@@ -425,8 +430,9 @@ OrderPreservingDictionary >> size [
 ]
 
 { #category : #private }
-OrderPreservingDictionary >> species [
-	^ self class
+OrderPreservingDictionary >> speciesNewFrom: anAssociationCollection [
+	^ (self species newFrom: anAssociationCollection)
+		defaultValue: defaultValue
 ]
 
 { #category : #accessing }
