@@ -1,14 +1,10 @@
 "
-This class is a Dictionary that preserves the order of its aassociations. That means messages that return collections of keys, values or associations and messages that enumerate those collections all operate based on the order that the underlying associations were added to the receiver. Association order is not, however, considered when comparing dictionaries for equality. As a result, instances can be compared safely with regular Dictionaries, and if they contain the same associations, regardless of the order, they wil be considered equal. Instances also return a configurable default value, which is nil by default, when an absent key or value is requested from it rather than raising an exception. Other than those differences, this class can generally be used the same way Dictionary can.
-
-(This class is not a subclass of HashedCollection due to a belief that relying on the public API of Dictionary is probably a safer long-term bet than relying on the public and private API of a relatively recent addition to Squeak and Pharo.)
+An order-preserving dictionary that returns a configurable default value (nil by default) when an absent key or value is requested from it rather than raising an exception.
 "
 Class {
 	#name : #OrderPreservingDictionary,
-	#superclass : #Collection,
+	#superclass : #StandardOrderedDictionary,
 	#instVars : [
-		'dictionary',
-		'orderedKeys',
 		'defaultValue'
 	],
 	#category : #'Collections-OrderPreservingDictionary'
@@ -17,21 +13,6 @@ Class {
 { #category : #'instance creation' }
 OrderPreservingDictionary class >> defaultValue: aDefaultValue [
 	^ self new defaultValue: aDefaultValue
-]
-
-{ #category : #inspecting }
-OrderPreservingDictionary class >> inspectorClass [
-	^ Dictionary inspectorClass
-]
-
-{ #category : #'instance creation' }
-OrderPreservingDictionary class >> new [
-	^ self new: 10
-]
-
-{ #category : #'instance creation' }
-OrderPreservingDictionary class >> new: aCapacity [
-	^ self new: aCapacity withDefaultValue: nil
 ]
 
 { #category : #'instance creation' }
@@ -43,65 +24,10 @@ OrderPreservingDictionary class >> new: aCapacity withDefaultValue: aDefaultValu
 OrderPreservingDictionary class >> newFrom: anAssociationCollection [
 	| newDictionary |
 
-	newDictionary := self new: anAssociationCollection size.
-	anAssociationCollection associationsDo: [:each |
-		newDictionary
-			at: each key
-			put: each value].
+	newDictionary := super newFrom: anAssociationCollection.
 	(anAssociationCollection respondsTo: #defaultValue)
 		ifTrue: [newDictionary defaultValue: anAssociationCollection defaultValue].
 	^ newDictionary.
-]
-
-{ #category : #'instance creation' }
-OrderPreservingDictionary class >> newFromPairs: aSequenceableCollection [
-	| newDictionary |
-
-	newDictionary := self new: (aSequenceableCollection size / 2) floor.
-	1 to: aSequenceableCollection size - 1 by: 2 do: [:i |
-		newDictionary
-			at: (aSequenceableCollection at: i)
-			put: (aSequenceableCollection at: i + 1)].
-	^ newDictionary.
-]
-
-{ #category : #comparing }
-OrderPreservingDictionary >> = anObject [
-	self == anObject
-		ifTrue: [^ true].
-
-	(anObject isDictionary and: [anObject size = self size])
-		ifFalse: [^ false].
-
-	dictionary associationsDo: [:each |
-		(anObject at: each key ifAbsent: [^ false]) = each value
-			ifFalse: [^ false]].
-	^ true.
-]
-
-{ #category : #adding }
-OrderPreservingDictionary >> add: anAssociation [
-	| oldSize newSize |
-
-	oldSize := dictionary size.
-	dictionary add: anAssociation.
-	(newSize := dictionary size) > oldSize
-		ifTrue: [
-			 newSize > orderedKeys size
-				ifTrue: [self growOrderedKeys].
-			orderedKeys at: newSize put: anAssociation key].
-	^ anAssociation.
-]
-
-{ #category : #adding }
-OrderPreservingDictionary >> addAll: aKeyedCollection [
-	"This method can accept any collection of associations, not just Dictionaries, because is uses
-	#associationsDo rather than #keysAndValuesDo:, and #associationsDo: has a default implementation in
-	Collection that just sends #do:. Since this is an order-preserving dictionary, you should be able to add
-	multiple associations at once from a SequenceableCollection and have their order be preserved."
-
-	aKeyedCollection associationsDo: [:each | self add: each].
-	^ aKeyedCollection.
 ]
 
 { #category : #accessing }
@@ -110,90 +36,8 @@ OrderPreservingDictionary >> associationAt: aKey [
 ]
 
 { #category : #accessing }
-OrderPreservingDictionary >> associationAt: aKey ifAbsent: aBlock [
-	^ dictionary associationAt: aKey ifAbsent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> associationAt: aKey ifPresent: aBlock [
-	"squeak does not have associationAt:ifPresent:"
-	^ aBlock cull: (dictionary associationAt: aKey ifAbsent: [^ nil])
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> associations [
-	| associations i |
-
-	associations := Array new: self size.
-	i := 1.
-	self associationsDo: [:each |
-		associations at: i put: each.
-		i := i + 1].
-	^ associations.
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> associationsDo: aBlock [
-	self keysDo: [:each | aBlock value: (self associationAt: each)]
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> associationsSelect: aBlock [
-	^ self speciesNewFrom: (self associations select: aBlock)
-]
-
-{ #category : #accessing }
 OrderPreservingDictionary >> at: aKey [
 	^ self at: aKey ifAbsent: [defaultValue]
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey ifAbsent: aBlock [
-	^ dictionary at: aKey ifAbsent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey ifAbsentPut: aBlock [
-	^ self at: aKey ifAbsent: [self at: aKey put: aBlock value]
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey ifPresent: aBlock [
-	^ dictionary at: aKey ifPresent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
-	^ dictionary
-		at: aKey
-		ifPresent: aPresentBlock
-		ifAbsent: anAbsentBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> at: aKey put: aValue [
-	| oldSize newSize |
-
-	oldSize := dictionary size.
-	dictionary at: aKey put: aValue.
-	(newSize := dictionary size) > oldSize
-		ifTrue: [
-			 newSize > orderedKeys size
-				ifTrue: [self growOrderedKeys].
-			orderedKeys at: newSize put: aKey].
-	^ aValue.
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> capacity [
-	^ dictionary capacity
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> collect: aBlock [
-	^ self speciesNewFrom:
-		(self associations collect: [:each |
-			each key -> (aBlock value: each value)])
 ]
 
 { #category : #copying }
@@ -211,79 +55,10 @@ OrderPreservingDictionary >> defaultValue: aDefaultValue [
 	defaultValue := aDefaultValue
 ]
 
-{ #category : #private }
-OrderPreservingDictionary >> dictionary [
-	^ dictionary
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> dictionaryClass [
-	^ Dictionary
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> do: aBlock [
-	self valuesDo: aBlock
-]
-
-{ #category : #private }
-OrderPreservingDictionary >> growOrderedKeys [
-	orderedKeys :=
-		(Array new: ((orderedKeys size * 1.5) asInteger max: 10))
-			replaceFrom: 1
-			to: orderedKeys size
-			with: orderedKeys
-			startingAt: 1.
-]
-
-{ #category : #comparing }
-OrderPreservingDictionary >> hash [
-	^ dictionary hash
-]
-
-{ #category : #testing }
-OrderPreservingDictionary >> includes: anObject [
-	^ dictionary includes: anObject
-]
-
-{ #category : #testing }
-OrderPreservingDictionary >> includesAssociation: anAssociation [
-	^ dictionary includesAssociation: anAssociation
-]
-
-{ #category : #testing }
-OrderPreservingDictionary >> includesIdentity: anObject [
-	^ dictionary includesIdentity: anObject
-]
-
-{ #category : #testing }
-OrderPreservingDictionary >> includesKey: aKey [
-	^ dictionary includesKey: aKey
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> indexOfKey: aKey [
-	^ self indexOfKey: aKey ifAbsent: [0]
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> indexOfKey: aKey ifAbsent: aBlock [
-	1 to: self size do: [:i |
-		(orderedKeys at: i) = aKey
-			ifTrue: [^ i]].
-	^ aBlock value.
-]
-
 { #category : #initialization }
 OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
-	dictionary := self dictionaryClass new: aCapacity.
-	orderedKeys := Array new: aCapacity.
+	self initialize: aCapacity.
 	defaultValue := aDefaultValue.
-]
-
-{ #category : #testing }
-OrderPreservingDictionary >> isDictionary [
-	^ true
 ]
 
 { #category : #accessing }
@@ -292,20 +67,8 @@ OrderPreservingDictionary >> keyAtIdentityValue: aValue [
 ]
 
 { #category : #accessing }
-OrderPreservingDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
-	^ dictionary keyAtIdentityValue: aValue ifAbsent: aBlock
-]
-
-{ #category : #accessing }
 OrderPreservingDictionary >> keyAtIndex: anIndex [
 	^ self keyAtIndex: anIndex ifAbsent: [defaultValue]
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> keyAtIndex: anIndex ifAbsent: aBlock [
-	(anIndex > 0 and: [anIndex <= self size])
-		ifTrue: [^ orderedKeys at: anIndex]
-		ifFalse: [^ aBlock value]
 ]
 
 { #category : #accessing }
@@ -313,134 +76,13 @@ OrderPreservingDictionary >> keyAtValue: aValue [
 	^ self keyAtValue: aValue ifAbsent: [defaultValue]
 ]
 
-{ #category : #accessing }
-OrderPreservingDictionary >> keyAtValue: aValue ifAbsent: aBlock [
-	^ dictionary keyAtValue: aValue ifAbsent: aBlock
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> keyForIdentity: anObject [
-	^ dictionary keyForIdentity: anObject
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> keys [
-	^ orderedKeys copyFrom: 1 to: self size
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> keysAndValuesDo: aBlock [
-	self keysDo: [:each | aBlock value: each value: (self at: each)]
-]
-
-{ #category : #removing }
-OrderPreservingDictionary >> keysAndValuesRemove: aTwoArgumentBlock [
-	| removedAssociations |
-
-	removedAssociations := OrderedCollection new.
-	self associationsDo: [:each |
-		(aTwoArgumentBlock value: each key value: each value)
-			ifTrue: [removedAssociations add: each]].
-	removedAssociations do: [:each | self removeKey: each key].
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> keysDo: aBlock [
-	1 to: self size do: [:i | aBlock value: (orderedKeys at: i)]
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> keysSortedSafely [
-	^ dictionary keysSortedSafely
-]
-
-{ #category : #private }
-OrderPreservingDictionary >> orderedKeys [
-	^ orderedKeys
-]
-
-{ #category : #copying }
-OrderPreservingDictionary >> postCopy [
-	orderedKeys := orderedKeys copy.
-	dictionary := dictionary copy.
-]
-
-{ #category : #printing }
-OrderPreservingDictionary >> printElementsOn: aStream [
-	self ifEmpty: [^ self].
-
-	aStream nextPut: $(.
-	self associations doWithIndex: [:associaiton :i |
-		aStream
-			print: associaiton key;
-			nextPutAll: '->';
-			print: associaiton value.
-		(i < self size)
-			ifTrue: [aStream space]].
-	aStream nextPut: $).
-]
-
-{ #category : #printing }
-OrderPreservingDictionary >> printNameOn: aStream [
-	aStream
-		nextPutAll: 'an';
-		space;
-		nextPutAll: self class name
-]
-
-{ #category : #removing }
-OrderPreservingDictionary >> remove: anObject ifAbsent: aBlock [
-	self shouldNotImplement
-]
-
-{ #category : #removing }
-OrderPreservingDictionary >> removeAll [
-	1 to: self size do: [:i | orderedKeys at: i put: nil].
-	dictionary removeAll.
-]
-
 { #category : #removing }
 OrderPreservingDictionary >> removeKey: aKey [
 	^ self removeKey: aKey ifAbsent: [defaultValue]
-]
-
-{ #category : #removing }
-OrderPreservingDictionary >> removeKey: aKey ifAbsent: aBlock [
-	| keyIndex |
-
-	keyIndex := self indexOfKey: aKey ifAbsent: [^ aBlock value].
-	orderedKeys
-		replaceFrom: keyIndex
-		to: self size - 1
-		with: orderedKeys
-		startingAt: keyIndex + 1.
-	orderedKeys at: self size put: nil.
-	^ dictionary removeKey: aKey.
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> select: aBlock [
-	^ self speciesNewFrom:
-		(self associations select: [:each | aBlock value: each value])
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> size [
-	^ dictionary size
 ]
 
 { #category : #private }
 OrderPreservingDictionary >> speciesNewFrom: anAssociationCollection [
 	^ (self species newFrom: anAssociationCollection)
 		defaultValue: defaultValue
-]
-
-{ #category : #accessing }
-OrderPreservingDictionary >> values [
-	^ self associations collect: [:each | each value]
-]
-
-{ #category : #enumerating }
-OrderPreservingDictionary >> valuesDo: aBlock [
-	self keysDo: [:each | aBlock value: (self at: each)]
 ]

@@ -2,17 +2,17 @@
 An IdentityDictionary version that uses == instead of = for key comparing.
 "
 Class {
-	#name : #OrderPreservingIdentityDictionary,
-	#superclass : #OrderPreservingDictionary,
+	#name : #OrderPreservingIdentityStringDictionary,
+	#superclass : #OrderPreservingStringDictionary,
 	#category : #'Collections-OrderPreservingDictionary'
 }
 
 { #category : #accessing }
-OrderPreservingIdentityDictionary >> dictionaryClass [
+OrderPreservingIdentityStringDictionary >> dictionaryClass [
 	^ IdentityDictionary
 ]
 
 { #category : #accessing }
-OrderPreservingIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
+OrderPreservingIdentityStringDictionary >> indexOfKey: aKey ifAbsent: aBlock [
 	^ self identityIndexOfKey: aKey ifAbsent: aBlock
 ]
