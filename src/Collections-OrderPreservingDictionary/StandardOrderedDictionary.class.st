@@ -181,6 +181,12 @@ StandardOrderedDictionary >> collect: aBlock [
 			each key -> (aBlock value: each value)])
 ]
 
+{ #category : #copying }
+StandardOrderedDictionary >> copyEmpty [
+	"for compatibility with squeak"
+	^ self species new
+]
+
 { #category : #private }
 StandardOrderedDictionary >> deleteOrderedKey: aKey [
 	| index |
