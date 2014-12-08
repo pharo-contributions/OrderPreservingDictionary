@@ -196,7 +196,7 @@ ConfigurationOfOrderPreservingDictionary >> version120: spec [
 	<version: '1.2' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec description: 'version 1.2'.
 		spec author: 'GuillaumeLarcheveque'.
 		spec timestamp: '6/27/2014 16:03'.
@@ -211,7 +211,7 @@ ConfigurationOfOrderPreservingDictionary >> version121: spec [
 	<version: '1.2.1' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.10';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-JAAyer.7'. ].
@@ -223,7 +223,7 @@ ConfigurationOfOrderPreservingDictionary >> version122: spec [
 	<version: '1.2.2' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.12';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.9'. ].
@@ -235,7 +235,7 @@ ConfigurationOfOrderPreservingDictionary >> version123: spec [
 	<version: '1.2.3' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.13';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.10'. ].
@@ -247,7 +247,7 @@ ConfigurationOfOrderPreservingDictionary >> version124: spec [
 	<version: '1.2.4' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.15';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.10'. ].
@@ -259,7 +259,7 @@ ConfigurationOfOrderPreservingDictionary >> version125: spec [
 	<version: '1.2.5' imports: #('1.0-baseline' )>
 
 	spec for: #'common' do: [
-		spec blessing: #'stable'.
+		spec blessing: #release.
 		spec 
 			package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.16';
 			package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.11'. ].
