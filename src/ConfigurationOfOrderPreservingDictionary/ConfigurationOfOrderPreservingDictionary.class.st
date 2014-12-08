@@ -122,15 +122,6 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 			group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary'). ].
 ]
 
-{ #category : #baselines }
-ConfigurationOfOrderPreservingDictionary >> baseline130: spec [ 
-	<version: '1.3.0-baseline' imports: #('1.0-baseline')>
-
-        spec for: #common do: [
-                spec blessing: #baseline.
-                spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.14'.].
-]
-
 { #category : #'symbolic versions' }
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
@@ -312,10 +303,10 @@ ConfigurationOfOrderPreservingDictionary >> version129: spec [
 
 { #category : #versions }
 ConfigurationOfOrderPreservingDictionary >> version130: spec [ 
-        <version: '1.3.0' imports: #('1.3.0-baseline')>
+	<version: '1.3.0' imports: #('1.0-baseline')>
 
-        spec for: #common do: [
-                spec blessing: #release.
-			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.21'.
-                ].
+	spec for: #common do: [
+		spec blessing: #release.
+		spec package: 'Collections-OrderPreservingDictionary' with: 			'Collections-OrderPreservingDictionary-monty.21'.
+		spec package: 'Collections-Tests-OrderPreservingDictionary' with: 			'Collections-Tests-OrderPreservingDictionary-monty.14']
 ]
