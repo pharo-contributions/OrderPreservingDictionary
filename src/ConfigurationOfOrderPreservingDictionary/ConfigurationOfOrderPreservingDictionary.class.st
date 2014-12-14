@@ -135,7 +135,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 
 { #category : #baselines }
 ConfigurationOfOrderPreservingDictionary >> baseline131: spec [ 
-        <version: '1.3.1-baseline' imports: #('1.0.0-baseline')>
+        <version: '1.3.1-baseline' imports: #('1.0-baseline')>
         
         spec for: #'gemstone' do: [
                 spec blessing: #baseline.
