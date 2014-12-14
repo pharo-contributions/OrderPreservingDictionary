@@ -253,12 +253,19 @@ StandardOrderedDictionary >> includes: anObject [
 
 { #category : #testing }
 StandardOrderedDictionary >> includesAssociation: anAssociation [
-	^ dictionary includesAssociation: anAssociation
+	"reimplemented for portability"
+	^ (dictionary
+		at: anAssociation key
+		ifAbsent: [^ false]) = anAssociation value
 ]
 
 { #category : #testing }
 StandardOrderedDictionary >> includesIdentity: anObject [
-	^ dictionary includesIdentity: anObject
+	"reimplemented for portability"
+	self valuesDo: [:each |
+		each == anObject
+			ifTrue: [^ true]].
+	^ false.
 ]
 
 { #category : #testing }
@@ -297,7 +304,11 @@ StandardOrderedDictionary >> keyAtIdentityValue: aValue [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
-	^ dictionary keyAtIdentityValue: aValue ifAbsent: aBlock
+	"reimplemented for portability"
+	self keysAndValuesDo: [:key :value |
+		value == aValue
+			ifTrue: [^ key]].
+	^ aBlock value.
 ]
 
 { #category : #accessing }
@@ -324,7 +335,11 @@ StandardOrderedDictionary >> keyAtValue: aValue ifAbsent: aBlock [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyForIdentity: anObject [
-	^ dictionary keyForIdentity: anObject
+	"reimplemented for portability"
+	self keysAndValuesDo: [:key :value |
+		value == anObject
+			ifTrue: [^ key]].
+	^ nil.
 ]
 
 { #category : #accessing }
