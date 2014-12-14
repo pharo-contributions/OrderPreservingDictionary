@@ -120,13 +120,35 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 			group: 'default' with: #('Core');
 			group: 'Core' with: #('Collections-OrderPreservingDictionary');
 			group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary'). ].
+		
+		"loads methods needed for gemstone"
+		spec
+			for: #'gemstone'
+			do: [
+				spec
+					package: 'Collections-OrderPreservingDictionary'
+					with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
+				spec
+					package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+					with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline131: spec [ 
+        <version: '1.3.1-baseline' imports: #('1.0.0-baseline')>
+        
+        spec for: #'gemstone' do: [
+                spec blessing: #baseline.
+                spec
+                     package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+                     with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1'. ].
 ]
 
 { #category : #'symbolic versions' }
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.0-baseline'.
+	spec for: #'common' version: '1.3.1-baseline'.
 
 ]
 
@@ -147,7 +169,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.3.0'.
+	spec for: #'common' version: '1.3.1'.
 
 ]
 
@@ -309,4 +331,18 @@ ConfigurationOfOrderPreservingDictionary >> version130: spec [
 		spec blessing: #release.
 		spec package: 'Collections-OrderPreservingDictionary' with: 			'Collections-OrderPreservingDictionary-monty.21'.
 		spec package: 'Collections-Tests-OrderPreservingDictionary' with: 			'Collections-Tests-OrderPreservingDictionary-monty.14']
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version131: spec [ 
+	<version: '1.3.1' imports: #('1.3.1-baseline')>
+
+	spec for: #common do: [
+		spec blessing: #release.
+		spec
+			package: 'Collections-OrderPreservingDictionary'
+			with: 'Collections-OrderPreservingDictionary-monty.22'.
+		spec
+			package: 'Collections-Tests-OrderPreservingDictionary'
+			with: 'Collections-Tests-OrderPreservingDictionary-monty.15'. ].
 ]
