@@ -10,21 +10,11 @@ StandardOrderedIdentityDictionaryTest class >> shouldInheritSelectors [
 ]
 
 { #category : #accessing }
-StandardOrderedIdentityDictionaryTest >> absentKey [
-	^ self identityAbsentKey
-]
-
-{ #category : #accessing }
-StandardOrderedIdentityDictionaryTest >> dictionaryAssociations [
-	^ self identityDictionaryAssociations
-]
-
-{ #category : #accessing }
 StandardOrderedIdentityDictionaryTest >> dictionaryClass [
 	^ StandardOrderedIdentityDictionary
 ]
 
-{ #category : #accessing }
-StandardOrderedIdentityDictionaryTest >> internalDictionaryClass [
-	^ IdentityDictionary
+{ #category : #testing }
+StandardOrderedIdentityDictionaryTest >> isTestingIdentityDictionary [
+	^ true
 ]

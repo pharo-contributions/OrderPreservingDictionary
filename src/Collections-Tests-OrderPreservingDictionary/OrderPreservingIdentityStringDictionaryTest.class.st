@@ -5,21 +5,11 @@ Class {
 }
 
 { #category : #accessing }
-OrderPreservingIdentityStringDictionaryTest >> absentKey [
-	^ self identityAbsentKey
-]
-
-{ #category : #accessing }
-OrderPreservingIdentityStringDictionaryTest >> dictionaryAssociations [
-	^ self identityDictionaryAssociations
-]
-
-{ #category : #accessing }
 OrderPreservingIdentityStringDictionaryTest >> dictionaryClass [
 	^ OrderPreservingIdentityStringDictionary
 ]
 
-{ #category : #accessing }
-OrderPreservingIdentityStringDictionaryTest >> internalDictionaryClass [
-	^ IdentityDictionary
+{ #category : #testing }
+OrderPreservingIdentityStringDictionaryTest >> isTestingIdentityDictionary [
+	^ true
 ]

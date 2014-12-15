@@ -190,9 +190,7 @@ OrderPreservingDictionaryTest >> testRemoveKey [
 			self
 				assert: (dictionary removeKey: removed key) = removed value;
 				assert: (dictionary removeKey: removed key) = self defaultValue;
-				deny: (dictionary includesKey: removed key);
-				deny: (dictionary keys identityIncludes: removed key);
-				deny: (dictionary orderedKeys identityIncludes: removed key);
+				assertRemovedKey: removed key from: dictionary;
 				assert: dictionary keys = (associationsToRemove collect: [:each | each key]) asArray].
 ]
 
