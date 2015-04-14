@@ -596,6 +596,37 @@ StandardOrderedDictionaryTest >> testHash [
 ]
 
 { #category : #tests }
+StandardOrderedDictionaryTest >> testIdentityIndexOfKey [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
+	dictionary keys withIndexDo: [:each :i |
+		self
+			assert: (dictionary identityIndexOfKey: each) = i;
+			assert: (dictionary identityIndexOfKey: each copy) isZero].
+	self assert: (dictionary identityIndexOfKey: self absentKey) isZero.
+]
+
+{ #category : #tests }
+StandardOrderedDictionaryTest >> testIdentityIndexOfKeyIfAbsent [
+	| dictionary |
+
+	dictionary := self dictionaryWithAssociations.
+	dictionary keys withIndexDo: [:each :i |
+		self
+			assert: (dictionary identityIndexOfKey: each ifAbsent: [self absentValue]) = i;
+			assert:
+				(dictionary
+					identityIndexOfKey: each copy
+					ifAbsent: [self absentValue]) = self absentValue].
+
+	self assert:
+		(dictionary
+			identityIndexOfKey: self absentKey
+			ifAbsent: [self absentValue]) = self absentValue.
+]
+
+{ #category : #tests }
 StandardOrderedDictionaryTest >> testIncludes [
 	| dictionary |
 
@@ -667,12 +698,12 @@ StandardOrderedDictionaryTest >> testIndexOfKeyIfAbsent [
 
 	dictionary := self dictionaryWithAssociations.
 	dictionary keys withIndexDo: [:each :i |
-		self assert: (dictionary indexOfKey: each ifAbsent: [self newValue]) = i].
+		self assert: (dictionary indexOfKey: each ifAbsent: [self absentValue]) = i].
 
 	self assert:
 		(dictionary
 			indexOfKey: self absentKey
-			ifAbsent: [self newValue]) = self newValue.
+			ifAbsent: [self absentValue]) = self absentValue.
 ]
 
 { #category : #tests }
@@ -682,26 +713,34 @@ StandardOrderedDictionaryTest >> testIsDictionary [
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testKeyAtIdentityValue [
-	| dictionary value |
+	| dictionary singleValue |
 
 	dictionary := self dictionaryWithSingleAssociation.
-	value := dictionary at: self singleKey.
+	singleValue := dictionary at: self singleKey.
 	self
 		should: [dictionary keyAtIdentityValue: self absentValue] raise: Error;
-		should: [dictionary keyAtIdentityValue: value copy] raise: Error;
-		assert: (dictionary keyAtValue: value) = self singleKey.
+		should: [dictionary keyAtIdentityValue: singleValue copy] raise: Error;
+		assert: (dictionary keyAtIdentityValue: singleValue) = self singleKey.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testKeyAtIdentityValueIfAbsent [
-	| dictionary value |
+	| dictionary singleValue |
 
 	dictionary := self dictionaryWithSingleAssociation.
-	value := dictionary at: self singleKey.
-	self
-		assert: (dictionary keyAtIdentityValue: self absentValue ifAbsent: [self absentKey]) = self absentKey;
-		assert: (dictionary keyAtIdentityValue: value copy ifAbsent: [self absentKey]) = self absentKey;
-		assert: (dictionary keyAtValue: value) = self singleKey.
+	singleValue := dictionary at: self singleKey.
+	self assert:
+		(dictionary
+			keyAtIdentityValue: self absentValue
+			ifAbsent: [self absentKey]) = self absentKey.
+	self assert:
+		(dictionary
+			keyAtIdentityValue: singleValue copy
+			ifAbsent: [self absentKey]) = self absentKey.
+	self assert:
+		(dictionary
+			keyAtValue: singleValue
+			ifAbsent: [self absentKey]) = self singleKey.
 ]
 
 { #category : #tests }
