@@ -16,3 +16,8 @@ OrderPreservingIdentityDictionary >> dictionaryClass [
 OrderPreservingIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
 	^ self identityIndexOfKey: aKey ifAbsent: aBlock
 ]
+
+{ #category : #private }
+OrderPreservingIdentityDictionary >> orderedKeysIndexOf: aKey [
+	^ self orderedKeysIdentityIndexOf: aKey
+]

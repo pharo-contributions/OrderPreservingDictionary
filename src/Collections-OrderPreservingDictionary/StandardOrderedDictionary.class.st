@@ -68,15 +68,15 @@ StandardOrderedDictionary >> = anObject [
 
 { #category : #adding }
 StandardOrderedDictionary >> add: anAssociation [
-	| oldSize newSize |
+	| oldSize |
 
 	oldSize := dictionary size.
 	dictionary add: anAssociation.
-	(newSize := dictionary size) > oldSize
+	dictionary size > oldSize
 		ifTrue: [
-			 newSize > orderedKeys size
-				ifTrue: [self growOrderedKeys].
-			orderedKeys at: newSize put: anAssociation key].
+			orderedKeys size > oldSize
+				ifFalse: [self growOrderedKeys].
+			orderedKeys at: oldSize + 1 put: anAssociation key].
 	^ anAssociation.
 ]
 
@@ -157,15 +157,15 @@ StandardOrderedDictionary >> at: aKey ifPresent: aPresentBlock ifAbsent: anAbsen
 
 { #category : #accessing }
 StandardOrderedDictionary >> at: aKey put: aValue [
-	| oldSize newSize |
+	| oldSize |
 
 	oldSize := dictionary size.
 	dictionary at: aKey put: aValue.
-	(newSize := dictionary size) > oldSize
+	dictionary size > oldSize
 		ifTrue: [
-			 newSize > orderedKeys size
-				ifTrue: [self growOrderedKeys].
-			orderedKeys at: newSize put: aKey].
+			orderedKeys size > oldSize
+				ifFalse: [self growOrderedKeys].
+			orderedKeys at: oldSize + 1 put: aKey].
 	^ aValue.
 ]
 
@@ -185,19 +185,6 @@ StandardOrderedDictionary >> collect: aBlock [
 StandardOrderedDictionary >> copyEmpty [
 	"for compatibility with squeak"
 	^ self species new
-]
-
-{ #category : #private }
-StandardOrderedDictionary >> deleteOrderedKey: aKey [
-	| index |
-
-	index := self indexOfKey: aKey ifAbsent: [^ self].
-	orderedKeys
-		replaceFrom: index
-		to: self size - 1
-		with: orderedKeys
-		startingAt: index + 1.
-	orderedKeys at: self size put: nil.
 ]
 
 { #category : #private }
@@ -224,6 +211,14 @@ StandardOrderedDictionary >> errorInvalidIndex: anIndex [
 ]
 
 { #category : #private }
+StandardOrderedDictionary >> errorValueNotFound: aValue [
+	"GS does not have ValueNotFound."
+	(Smalltalk
+		at: #ValueNotFound
+		ifAbsent: [Error signal: 'Value not found']) signalFor: aValue
+]
+
+{ #category : #private }
 StandardOrderedDictionary >> growOrderedKeys [
 	orderedKeys :=
 		(Array new: ((orderedKeys size * 1.5) asInteger max: 10))
@@ -236,6 +231,11 @@ StandardOrderedDictionary >> growOrderedKeys [
 { #category : #comparing }
 StandardOrderedDictionary >> hash [
 	^ dictionary hash
+]
+
+{ #category : #accessing }
+StandardOrderedDictionary >> identityIndexOfKey: aKey [
+	^ self identityIndexOfKey: aKey ifAbsent: [0]
 ]
 
 { #category : #accessing }
@@ -253,7 +253,8 @@ StandardOrderedDictionary >> includes: anObject [
 
 { #category : #testing }
 StandardOrderedDictionary >> includesAssociation: anAssociation [
-	"reimplemented for portability"
+	"IndentityDictionary>>includesAssociation: works differently on GS testing both key
+	and value identity, so it is reimplemented here to behave like Pharo/Squeak"
 	^ (dictionary
 		at: anAssociation key
 		ifAbsent: [^ false]) = anAssociation value
@@ -261,7 +262,7 @@ StandardOrderedDictionary >> includesAssociation: anAssociation [
 
 { #category : #testing }
 StandardOrderedDictionary >> includesIdentity: anObject [
-	"reimplemented for portability"
+	"GS does not have includesIdentity:"
 	self valuesDo: [:each |
 		each == anObject
 			ifTrue: [^ true]].
@@ -299,12 +300,14 @@ StandardOrderedDictionary >> isDictionary [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtIdentityValue: aValue [
-	^ dictionary keyAtIdentityValue: aValue
+	^ self
+		keyAtIdentityValue: aValue
+		ifAbsent: [self errorValueNotFound: aValue]
 ]
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
-	"reimplemented for portability"
+	"GS does not have keyAtIdentityValue:ifAbsent:"
 	self keysAndValuesDo: [:key :value |
 		value == aValue
 			ifTrue: [^ key]].
@@ -378,6 +381,40 @@ StandardOrderedDictionary >> orderedKeys [
 	^ orderedKeys
 ]
 
+{ #category : #private }
+StandardOrderedDictionary >> orderedKeysIdentityIndexOf: aKey [
+	"GS does not have identityIndexOf:"
+	1 to: orderedKeys size do: [:i |
+		(orderedKeys at: i) == aKey
+			ifTrue: [^ i]].
+	^ 0.
+]
+
+{ #category : #private }
+StandardOrderedDictionary >> orderedKeysIndexOf: aKey [
+	^ orderedKeys indexOf: aKey
+]
+
+{ #category : #private }
+StandardOrderedDictionary >> orderedKeysRemove: aRemovedKey [
+	| index |
+
+	index := self orderedKeysIndexOf: aRemovedKey.
+
+	"shift every remaining key after to the left by one"
+	orderedKeys
+		replaceFrom: index
+		to: self size
+		with: orderedKeys
+		startingAt: index + 1.
+
+	"one key was removed and the rest shifted, so nil what was the last
+	key slot before removing and shifting"
+	orderedKeys
+		at: self size + 1
+		put: nil.
+]
+
 { #category : #copying }
 StandardOrderedDictionary >> postCopy [
 	orderedKeys := orderedKeys copy.
@@ -415,14 +452,22 @@ StandardOrderedDictionary >> removeAll [
 
 { #category : #removing }
 StandardOrderedDictionary >> removeKey: aKey [
-	self deleteOrderedKey: aKey.
-	^ dictionary removeKey: aKey.
+	| value |
+
+	value := dictionary removeKey: aKey.
+	self orderedKeysRemove: aKey.
+	^ value.
 ]
 
 { #category : #removing }
 StandardOrderedDictionary >> removeKey: aKey ifAbsent: aBlock [
-	self deleteOrderedKey: aKey.
-	^ dictionary removeKey: aKey ifAbsent: aBlock.
+	| oldSize value |
+
+	oldSize := dictionary size.
+	value := dictionary removeKey: aKey ifAbsent: aBlock.
+	dictionary size < oldSize
+		ifTrue: [self orderedKeysRemove: aKey].
+	^ value.
 ]
 
 { #category : #enumerating }
