@@ -30,6 +30,12 @@ ConfigurationOfOrderPreservingDictionary class >> bootstrapPackage: aString from
 			version workingCopy repositoryGroup addRepository: repository]
 ]
 
+{ #category : #catalog }
+ConfigurationOfOrderPreservingDictionary class >> catalogDescription [
+
+^ 'This package has two ordered dictionary classes that behave like OrderedDictionary and OrderedIdentityDictionary in Pharo but are portable to Squeak and Gemstone, and other ordered dictionary classes needed by XMLParser.'
+]
+
 { #category : #private }
 ConfigurationOfOrderPreservingDictionary class >> ensureMetacello [
 	"Bootstrap Gofer (if necessary), bootstrap ConfigurationOfMetacello (using old Gofer API), then load the latest 
@@ -169,7 +175,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.3.2'.
+	spec for: #'common' version: '1.3.3'.
 
 ]
 
@@ -355,5 +361,16 @@ ConfigurationOfOrderPreservingDictionary >> version132: spec [
                 spec blessing: #release.
 			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.22'.
 			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.16'.
+                ].
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version133: spec [ 
+        <version: '1.3.3' imports: #('1.3.1-baseline')>
+
+        spec for: #common do: [
+                spec blessing: #release.
+			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.23'.
+			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.17'.
                 ].
 ]
