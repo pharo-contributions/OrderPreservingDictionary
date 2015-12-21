@@ -17,6 +17,11 @@ OrderPreservingIdentityStringDictionary >> indexOfKey: aKey ifAbsent: aBlock [
 	^ self identityIndexOfKey: aKey ifAbsent: aBlock
 ]
 
+{ #category : #testing }
+OrderPreservingIdentityStringDictionary >> isIdentityDictionary [
+	^ true
+]
+
 { #category : #private }
 OrderPreservingIdentityStringDictionary >> orderedKeysIndexOf: aKey [
 	^ self orderedKeysIdentityIndexOf: aKey

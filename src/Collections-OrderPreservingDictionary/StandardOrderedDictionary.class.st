@@ -57,7 +57,9 @@ StandardOrderedDictionary >> = anObject [
 	self == anObject
 		ifTrue: [^ true].
 
-	(anObject isDictionary and: [anObject size = self size])
+	((anObject isKindOf: StandardOrderedDictionary)
+		and: [self isIdentityDictionary = anObject isIdentityDictionary
+			and: [self size = anObject size]])
 		ifFalse: [^ false].
 
 	dictionary associationsDo: [:each |
@@ -296,6 +298,11 @@ StandardOrderedDictionary >> initialize: aCapacity [
 { #category : #testing }
 StandardOrderedDictionary >> isDictionary [
 	^ true
+]
+
+{ #category : #testing }
+StandardOrderedDictionary >> isIdentityDictionary [
+	^ false
 ]
 
 { #category : #accessing }
