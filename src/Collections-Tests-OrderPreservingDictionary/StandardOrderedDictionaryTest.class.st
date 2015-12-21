@@ -223,6 +223,11 @@ StandardOrderedDictionaryTest >> nonIdentityDictionaryAssociations [
 ]
 
 { #category : #accessing }
+StandardOrderedDictionaryTest >> otherOrderPreservingDictionaryClasses [
+	^ StandardOrderedDictionary withAllSubclasses copyWithout: self dictionaryClass
+]
+
+{ #category : #accessing }
 StandardOrderedDictionaryTest >> singleAssociation [
 	^ self dictionaryAssociations first
 ]
@@ -551,48 +556,79 @@ StandardOrderedDictionaryTest >> testEquals [
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testEqualsDictionary [
-	| orderedDictionary unorderedDictionary |
+	"cannot use assertDictionary:doesNotEqual: for backwards compatibility with
+	older Pharo images where Dictionary>>= uses #isDictionary to test the argument
+	because these classes also implement isDictionary"
+	self
+		deny: self emptyDictionary = self emptyInternalDictionary;
+		deny: self dictionaryWithAssociations = self internalDictionaryWithAssociations
+]
 
-	"only works on Pharo"
-	orderedDictionary := self emptyDictionary.
-	unorderedDictionary := self emptyInternalDictionary.
-	unorderedDictionary = orderedDictionary
-		ifFalse: [^ self].
-
-	self assertDictionary: orderedDictionary equals: unorderedDictionary.
-	orderedDictionary addAll: self dictionaryAssociations.
-	self assertDictionary: orderedDictionary doesNotEqual: unorderedDictionary.
-	
-	"Dictionary>>addAll: can only accept keyed collections as an argument, so newFrom: is
-	used instead."
-	unorderedDictionary := self internalDictionaryWithAssociations.
-	self assertDictionary: orderedDictionary equals: unorderedDictionary.
-	unorderedDictionary := self internalDictionaryClass newFrom: self dictionaryAssociations reversed.
-	self assertDictionary: orderedDictionary equals: unorderedDictionary.
+{ #category : #tests }
+StandardOrderedDictionaryTest >> testEqualsOtherOrderPreservingDictionaries [
+	self otherOrderPreservingDictionaryClasses do: [:otherClass | | dictionary otherDictionary |
+		dictionary := self dictionaryClass new.
+		otherDictionary := otherClass new.
+		dictionary isIdentityDictionary = otherDictionary isIdentityDictionary
+			ifTrue: [
+				self
+					assertDictionary: dictionary
+					equals: otherDictionary.
+				self dictionaryAssociations do: [:each |
+					dictionary add: each.
+					self
+						assertDictionary: dictionary
+						doesNotEqual: otherDictionary.
+					otherDictionary add: each copy.
+					self
+						assertDictionary: dictionary
+						equals: otherDictionary]]
+			ifFalse: [
+				self
+					assertDictionary: dictionary
+					doesNotEqual: otherDictionary.
+				self dictionaryAssociations do: [:each |
+					dictionary add: each.
+					otherDictionary add: each copy.
+					self
+						assertDictionary: dictionary
+						doesNotEqual: otherDictionary]]]
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testHash [
-	| dictionary |
+	| dictionary otherDictionary internalDictionary otherInternalDictionary |
 
 	dictionary := self emptyDictionary.
-	self assert: dictionary hash = self emptyDictionary hash.
-	self emptyInternalDictionary hash =
-		self internalDictionaryWithSingleAssociation hash
-		ifFalse: [
-			self deny:
-				dictionary hash = self dictionaryWithSingleAssociation hash].
-	self emptyInternalDictionary hash = self internalDictionaryWithAssociations hash
-		ifFalse: [self deny: dictionary hash = self dictionaryWithAssociations hash].
+	otherDictionary := self emptyDictionary.
+	internalDictionary := self emptyInternalDictionary.
+	otherInternalDictionary := self emptyInternalDictionary.
+	self assert: dictionary hash = otherDictionary hash.
+	self dictionaryAssociations do: [:each |
+		dictionary add: each.
+		internalDictionary add: each copy.
+		"if the internal hashes differ after adding to one, the external should too"
+		internalDictionary hash = otherInternalDictionary hash
+			ifFalse: [self deny: dictionary hash = otherDictionary hash].
 
-	dictionary := self dictionaryWithSingleAssociation.
-	self assert: dictionary hash = self dictionaryWithSingleAssociation hash.
-	(self internalDictionaryWithSingleAssociation hash =
-		self internalDictionaryWithAssociations hash)
-		ifFalse: [self deny: dictionary hash = self dictionaryWithAssociations hash].
+		otherDictionary add: each copy.
+		otherInternalDictionary add: each copy.
+		"should be equal regardless now"
+		self assert: dictionary hash = otherDictionary hash].
+]
 
-	dictionary := self dictionaryWithAssociations.
-	self assert: dictionary hash = self dictionaryWithAssociations hash.
+{ #category : #tests }
+StandardOrderedDictionaryTest >> testHashOtherOrderPreservingDictionaries [
+	self otherOrderPreservingDictionaryClasses do: [:otherClass | | dictionary otherDictionary |
+		dictionary := self dictionaryClass new.
+		otherDictionary := otherClass new.
+		dictionary isIdentityDictionary = otherDictionary isIdentityDictionary
+			ifTrue: [
+				self assert: dictionary hash = otherDictionary hash.
+				self dictionaryAssociations do: [:each |
+					dictionary add: each.
+					otherDictionary add: each copy.
+					self assert: dictionary hash = otherDictionary hash]]]
 ]
 
 { #category : #tests }
@@ -709,6 +745,11 @@ StandardOrderedDictionaryTest >> testIndexOfKeyIfAbsent [
 { #category : #tests }
 StandardOrderedDictionaryTest >> testIsDictionary [
 	self assert: self dictionaryClass new isDictionary
+]
+
+{ #category : #tests }
+StandardOrderedDictionaryTest >> testIsIdentityDictionary [
+	self assert: self emptyDictionary isIdentityDictionary = self isTestingIdentityDictionary
 ]
 
 { #category : #tests }
