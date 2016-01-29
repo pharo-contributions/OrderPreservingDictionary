@@ -38,7 +38,7 @@ ConfigurationOfOrderPreservingDictionary class >> catalogDescription [
 
 { #category : #catalog }
 ConfigurationOfOrderPreservingDictionary class >> catalogKeywords [
-	^ #( collection dictionary ordered 'order-preserving' )
+	^ #( collection dictionary ordered #'order-preserving' )
 ]
 
 { #category : #catalog }
