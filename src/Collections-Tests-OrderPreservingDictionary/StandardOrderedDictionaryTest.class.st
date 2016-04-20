@@ -996,6 +996,21 @@ StandardOrderedDictionaryTest >> testRemoveKeyIfAbsent [
 ]
 
 { #category : #tests }
+StandardOrderedDictionaryTest >> testRemoveKeys [
+	0 to: self dictionaryKeys size do: [:i | | dictionary keysToRemove dictionaryWithoutKeys |
+		dictionary := self dictionaryWithAssociations.
+		keysToRemove := (self dictionaryKeys copyFrom: 1 to: i) asSet.
+		self assert: (dictionary removeKeys: keysToRemove) == dictionary.
+	
+		dictionaryWithoutKeys := self dictionaryWithAssociations.
+		keysToRemove do: [:each | dictionaryWithoutKeys removeKey: each].
+		self
+			assertDictionary: dictionary
+			equals: dictionaryWithoutKeys.
+		self assert: dictionary keys = dictionaryWithoutKeys keys]
+]
+
+{ #category : #tests }
 StandardOrderedDictionaryTest >> testSelect [
 	| dictionary |
 
