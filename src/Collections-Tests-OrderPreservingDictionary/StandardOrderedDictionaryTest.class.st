@@ -39,17 +39,23 @@ StandardOrderedDictionaryTest >> assertDictionary: aDictionary equals: aSecondDi
 ]
 
 { #category : #assertions }
-StandardOrderedDictionaryTest >> assertIsDictionary: anObject includesAll: anAssociationCollection [
+StandardOrderedDictionaryTest >> assertIsDictionary: anObject withAssociations: anAssociationCollection [
+	"tests that anObject is an instance of the correct dictionary class
+	with the specified ordered associations"
 	self
-		assert: (anObject isMemberOf: self dictionaryClass);
-		assert: (anAssociationCollection allSatisfy: [:each | anObject includesAssociation: each])
+		assert: anObject class == self dictionaryClass;
+		assert: anObject associations asArray = anAssociationCollection asArray
 ]
 
 { #category : #assertions }
-StandardOrderedDictionaryTest >> assertIsDictionary: anObject withAssociations: anAssociationCollection [
+StandardOrderedDictionaryTest >> assertIsDictionary: anObject withUnorderedAssociations: anAssociationCollection [
+	"tests that anObject is an instance of the correct dictionary class
+	with the specified associations, but ignoring the order"
 	self
-		assert: (anObject isMemberOf: self dictionaryClass);
-		assert: anObject associations = anAssociationCollection
+		assert: anObject class == self dictionaryClass;
+		assert: anObject size = anAssociationCollection size.
+	anAssociationCollection do: [:each |
+		self assert: (anObject includesAssociation: each)].
 ]
 
 { #category : #assertions }
@@ -64,9 +70,12 @@ StandardOrderedDictionaryTest >> assertRemovedKey: aKey from: aDictionary [
 
 { #category : #assertions }
 StandardOrderedDictionaryTest >> assertSelector: aSelector collects: aCollection from: aDictionary [
+	| collected |
+
+	collected := aDictionary perform: aSelector.
 	self
-		assert: (self emptyDictionary perform: aSelector) asArray = #();
-		assert: (aDictionary perform: aSelector) asArray = aCollection asArray
+		assert: collected class == self collectClass;
+		assert: collected asArray = aCollection asArray.
 ]
 
 { #category : #assertions }
@@ -75,13 +84,6 @@ StandardOrderedDictionaryTest >> assertSelector: aSelector enumerates: aFirstCol
 
 	firstEnumerated := OrderedCollection new.
 	secondEnumerated := OrderedCollection new.
-	self emptyDictionary perform: aSelector with: [:first :second |
-		firstEnumerated add: first.
-		secondEnumerated add: second].
-	self
-		assert: firstEnumerated isEmpty;
-		assert: secondEnumerated isEmpty.
-
 	aDictionary perform: aSelector with: [:first :second |
 		firstEnumerated add: first.
 		secondEnumerated add: second].
@@ -95,11 +97,13 @@ StandardOrderedDictionaryTest >> assertSelector: aSelector enumerates: aCollecti
 	| enumerated |
 
 	enumerated := OrderedCollection new.
-	self emptyDictionary perform: aSelector with: [:each | enumerated add: each].
-	self assert: enumerated isEmpty.
-
 	aDictionary perform: aSelector with: [:each | enumerated add: each].
 	self assert: enumerated asArray = aCollection asArray.
+]
+
+{ #category : #accessing }
+StandardOrderedDictionaryTest >> collectClass [
+	^ Array
 ]
 
 { #category : #accessing }
@@ -270,22 +274,25 @@ StandardOrderedDictionaryTest >> testAdd [
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testAddAll [
-	| dictionary |
+	| dictionary addedAssociations |
 
 	dictionary := self emptyDictionary.
 	self deny:
 		(self dictionaryAssociations anySatisfy: [:each |
 			dictionary includesAssociation: each]).
 
+	addedAssociations := self dictionaryAssociations.
+	self assert: (dictionary addAll: addedAssociations) == addedAssociations.
 	self
-		assert: (dictionary addAll: self dictionaryAssociations) = self dictionaryAssociations;
-		assert: dictionary associations = self dictionaryAssociations.
+		assertIsDictionary: dictionary
+		withAssociations: addedAssociations.
 
 	"ensure adding the same associations doesn't change the order"
-	self assert:
-		(dictionary addAll: self dictionaryAssociations reversed) =
-			self dictionaryAssociations reversed.
-	self assertIsDictionary: dictionary withAssociations: self dictionaryAssociations.
+	addedAssociations := self dictionaryAssociations reversed.
+	self assert: (dictionary addAll: addedAssociations) == addedAssociations.
+	self
+		assertIsDictionary: dictionary
+		withAssociations: self dictionaryAssociations.
 ]
 
 { #category : #tests }
@@ -322,16 +329,24 @@ StandardOrderedDictionaryTest >> testAssociationAtIfPresent [
 StandardOrderedDictionaryTest >> testAssociations [
 	self
 		assertSelector: #associations
+		collects: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #associations
 		collects: self dictionaryAssociations
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testAssociationsDo [
 	self
 		assertSelector: #associationsDo:
+		enumerates: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #associationsDo:
 		enumerates: self dictionaryAssociations
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
@@ -527,8 +542,12 @@ StandardOrderedDictionaryTest >> testDictionary [
 StandardOrderedDictionaryTest >> testDo [
 	self
 		assertSelector: #do:
+		enumerates: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #do:
 		enumerates: self dictionaryValues
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
@@ -858,17 +877,26 @@ StandardOrderedDictionaryTest >> testKeyForIdentity [
 StandardOrderedDictionaryTest >> testKeys [
 	self
 		assertSelector: #keys
+		collects: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #keys
 		collects: self dictionaryKeys
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testKeysAndValuesDo [
 	self
 		assertSelector: #keysAndValuesDo:
+		enumerates: #()
+		and: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #keysAndValuesDo:
 		enumerates: self dictionaryKeys
 		and: self dictionaryValues
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
@@ -891,34 +919,49 @@ StandardOrderedDictionaryTest >> testKeysAndValuesRemove [
 StandardOrderedDictionaryTest >> testKeysDo [
 	self
 		assertSelector: #keysDo:
+		enumerates: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #keysDo:
 		enumerates: self dictionaryKeys
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testKeysSortedSafely [
-	"The keys are all strings, so the default #sorted implementation will suffice."
+	self
+		assertSelector: #keysSortedSafely
+		collects: #()
+		from: self emptyDictionary.
+	"The keys are all strings, so the default #sorted implementation is OK."
 	self
 		assertSelector: #keysSortedSafely
 		collects: self dictionaryKeys sorted
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testNewFrom [
-	| dictionaryOne dictionaryTwo dictionaryThree |
+	| dictionary |
 	
-	dictionaryOne := self dictionaryClass newFrom: self dictionaryAssociations.
-	dictionaryTwo := self dictionaryClass newFrom: dictionaryOne.
-	dictionaryThree := self dictionaryClass newFrom: self internalDictionaryWithAssociations.
+	dictionary := self dictionaryClass newFrom: self dictionaryAssociations.
 	self
-		assertIsDictionary: dictionaryOne withAssociations: self dictionaryAssociations;
-		assertIsDictionary: dictionaryTwo withAssociations: self dictionaryAssociations;
-		assertIsDictionary: dictionaryThree includesAll: self dictionaryAssociations.
+		assertIsDictionary: dictionary
+		withAssociations: self dictionaryAssociations.
+	self
+		assertIsDictionary: (self dictionaryClass newFrom: dictionary)
+		withAssociations: self dictionaryAssociations.
+	self
+		assertIsDictionary:
+			(self dictionaryClass newFrom: self internalDictionaryWithAssociations)
+		withUnorderedAssociations: self dictionaryAssociations.
 
-	(self dictionaryClass newFrom: dictionaryOne)
-		at: self singleKey put: self newValue.
-	self deny: (dictionaryOne at: self singleKey) = self newValue.
+	self
+		assertDictionary: dictionary
+		doesNotEqual:
+			((self dictionaryClass newFrom: dictionary)
+				at: self singleKey put: self newValue;
+				yourself).
 ]
 
 { #category : #tests }
@@ -1043,14 +1086,22 @@ StandardOrderedDictionaryTest >> testSize [
 StandardOrderedDictionaryTest >> testValues [
 	self
 		assertSelector: #values
+		collects: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #values
 		collects: self dictionaryValues
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
 
 { #category : #tests }
 StandardOrderedDictionaryTest >> testValuesDo [
 	self
 		assertSelector: #valuesDo:
+		enumerates: #()
+		from: self emptyDictionary.
+	self
+		assertSelector: #valuesDo:
 		enumerates: self dictionaryValues
-		from: self dictionaryWithAssociations
+		from: self dictionaryWithAssociations.
 ]
