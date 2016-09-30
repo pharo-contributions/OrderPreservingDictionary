@@ -17,7 +17,9 @@ OrderPreservingDictionary class >> defaultValue: aDefaultValue [
 
 { #category : #'instance creation' }
 OrderPreservingDictionary class >> new: aCapacity withDefaultValue: aDefaultValue [
-	^ self basicNew initialize: aCapacity withDefaultValue: aDefaultValue
+	^ self basicNew
+		initialize: aCapacity
+		withDefaultValue: aDefaultValue
 ]
 
 { #category : #'instance creation' }
