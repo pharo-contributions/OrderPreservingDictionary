@@ -32,12 +32,16 @@ OrderPreservingDictionary class >> newFrom: anAssociationCollection [
 
 { #category : #accessing }
 OrderPreservingDictionary >> associationAt: aKey [
-	^ self associationAt: aKey ifAbsent: [nil]
+	^ self
+		associationAt: aKey
+		ifAbsent: [nil]
 ]
 
 { #category : #accessing }
 OrderPreservingDictionary >> at: aKey [
-	^ self at: aKey ifAbsent: [defaultValue]
+	^ self
+		at: aKey
+		ifAbsent: [defaultValue]
 ]
 
 { #category : #copying }
@@ -63,22 +67,30 @@ OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultVal
 
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtIdentityValue: aValue [
-	^ self keyAtIdentityValue: aValue ifAbsent: [defaultValue]
+	^ self
+		keyAtIdentityValue: aValue
+		ifAbsent: [defaultValue]
 ]
 
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtIndex: anIndex [
-	^ self keyAtIndex: anIndex ifAbsent: [defaultValue]
+	^ self
+		keyAtIndex: anIndex
+		ifAbsent: [defaultValue]
 ]
 
 { #category : #accessing }
 OrderPreservingDictionary >> keyAtValue: aValue [
-	^ self keyAtValue: aValue ifAbsent: [defaultValue]
+	^ self
+		keyAtValue: aValue
+		ifAbsent: [defaultValue]
 ]
 
 { #category : #removing }
 OrderPreservingDictionary >> removeKey: aKey [
-	^ self removeKey: aKey ifAbsent: [defaultValue]
+	^ self
+		removeKey: aKey
+		ifAbsent: [defaultValue]
 ]
 
 { #category : #private }

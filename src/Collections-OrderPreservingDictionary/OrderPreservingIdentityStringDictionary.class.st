@@ -14,7 +14,9 @@ OrderPreservingIdentityStringDictionary >> dictionaryClass [
 
 { #category : #accessing }
 OrderPreservingIdentityStringDictionary >> indexOfKey: aKey ifAbsent: aBlock [
-	^ self identityIndexOfKey: aKey ifAbsent: aBlock
+	^ self
+		identityIndexOfKey: aKey
+		ifAbsent: aBlock
 ]
 
 { #category : #testing }

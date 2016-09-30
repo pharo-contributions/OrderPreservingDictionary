@@ -54,10 +54,14 @@ StandardOrderedDictionary class >> newFromPairs: aSequenceableCollection [
 
 { #category : #comparing }
 StandardOrderedDictionary >> = anObject [
+	"Returns true if the receiver and argument are identical, or if they
+	are both some kind of order-preserving dictionary and if they have
+	the same associations regardless of order."
+
 	self == anObject
 		ifTrue: [^ true].
 
-	((anObject isKindOf: StandardOrderedDictionary)
+	(anObject isOrderPreservingDictionary
 		and: [self isIdentityDictionary = anObject isIdentityDictionary
 			and: [self size = anObject size]])
 		ifFalse: [^ false].
@@ -84,8 +88,8 @@ StandardOrderedDictionary >> add: anAssociation [
 
 { #category : #adding }
 StandardOrderedDictionary >> addAll: anAssociationCollection [
-	"Since Collection implements #associationsDo, this method can accept any collection
-	of associations including Arrays and OrderedCollections and not just Dictionaries"
+	"Since Collection implements #associationsDo:, this method can accept
+	any collection of associations including Arrays and OrderedCollections"
 
 	anAssociationCollection associationsDo: [:each | self add: each].
 	^ anAssociationCollection.
@@ -98,13 +102,19 @@ StandardOrderedDictionary >> associationAt: aKey [
 
 { #category : #accessing }
 StandardOrderedDictionary >> associationAt: aKey ifAbsent: aBlock [
-	^ dictionary associationAt: aKey ifAbsent: aBlock
+	^ dictionary
+		associationAt: aKey
+		ifAbsent: aBlock
 ]
 
 { #category : #accessing }
 StandardOrderedDictionary >> associationAt: aKey ifPresent: aBlock [
-	"squeak does not have associationAt:ifPresent:"
-	^ aBlock cull: (dictionary associationAt: aKey ifAbsent: [^ nil])
+	"Squeak and GS do not have #associationAt:ifPresent: so it
+	is reimplemented for portability"
+	^ aBlock cull:
+		(dictionary
+			associationAt: aKey
+			ifAbsent: [^ nil])
 ]
 
 { #category : #accessing }
@@ -121,7 +131,8 @@ StandardOrderedDictionary >> associations [
 
 { #category : #enumerating }
 StandardOrderedDictionary >> associationsDo: aBlock [
-	self keysDo: [:each | aBlock value: (self associationAt: each)]
+	self keysDo: [:each |
+		aBlock value: (self associationAt: each)]
 ]
 
 { #category : #enumerating }
@@ -136,25 +147,39 @@ StandardOrderedDictionary >> at: aKey [
 
 { #category : #accessing }
 StandardOrderedDictionary >> at: aKey ifAbsent: aBlock [
-	^ dictionary at: aKey ifAbsent: aBlock
+	^ dictionary
+		at: aKey
+		ifAbsent: aBlock
 ]
 
 { #category : #accessing }
 StandardOrderedDictionary >> at: aKey ifAbsentPut: aBlock [
-	^ self at: aKey ifAbsent: [self at: aKey put: aBlock value]
+	^ self
+		at: aKey
+		ifAbsent: [
+			self
+				at: aKey
+				put: aBlock value]
 ]
 
 { #category : #accessing }
 StandardOrderedDictionary >> at: aKey ifPresent: aBlock [
-	^ dictionary at: aKey ifPresent: aBlock
+	"Squeak and GS don't use #cull: for the ifPresent:
+	block, so it is reimplemented for portability"
+	^ aBlock cull:
+		(self
+			at: aKey
+			ifAbsent: [^ nil])
 ]
 
 { #category : #accessing }
 StandardOrderedDictionary >> at: aKey ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
-	^ dictionary
+	"Squeak and GS don't use #cull: for the ifPresent:
+	block, so it is reimplemented for portability"
+	self
 		at: aKey
-		ifPresent: aPresentBlock
-		ifAbsent: anAbsentBlock
+		ifPresent: [:value | ^ aPresentBlock cull: value].
+	^ anAbsentBlock value.
 ]
 
 { #category : #accessing }
@@ -162,7 +187,9 @@ StandardOrderedDictionary >> at: aKey put: aValue [
 	| oldSize |
 
 	oldSize := dictionary size.
-	dictionary at: aKey put: aValue.
+	dictionary
+		at: aKey
+		put: aValue.
 	dictionary size > oldSize
 		ifTrue: [
 			orderedKeys size > oldSize
@@ -185,7 +212,8 @@ StandardOrderedDictionary >> collect: aBlock [
 
 { #category : #copying }
 StandardOrderedDictionary >> copyEmpty [
-	"for compatibility with squeak"
+	"Squeak and GS don't have Collection>>#copyEmpty:, so it is
+	reimplemented for portability"
 	^ self species new
 ]
 
@@ -206,18 +234,16 @@ StandardOrderedDictionary >> do: aBlock [
 
 { #category : #private }
 StandardOrderedDictionary >> errorInvalidIndex: anIndex [
-	"squeak does not have SubscriptOutOfBounds."
-	(Smalltalk
-		at: #SubscriptOutOfBounds
-		ifAbsent: [Error signal: 'Invalid index: ', anIndex printString]) signalFor: anIndex
+	"Squeak and GS do not have SubscriptOutOfBounds, so Error is used
+	for portability"
+	Error signal: 'Invalid index: ', anIndex printString
 ]
 
 { #category : #private }
 StandardOrderedDictionary >> errorValueNotFound: aValue [
-	"GS does not have ValueNotFound."
-	(Smalltalk
-		at: #ValueNotFound
-		ifAbsent: [Error signal: 'Value not found']) signalFor: aValue
+	"Squeak and GS do not have ValueNotFound, so Error is used
+	for portability"
+	Error signal: 'Value not found'
 ]
 
 { #category : #private }
@@ -237,7 +263,9 @@ StandardOrderedDictionary >> hash [
 
 { #category : #accessing }
 StandardOrderedDictionary >> identityIndexOfKey: aKey [
-	^ self identityIndexOfKey: aKey ifAbsent: [0]
+	^ self
+		identityIndexOfKey: aKey
+		ifAbsent: [0]
 ]
 
 { #category : #accessing }
@@ -278,7 +306,9 @@ StandardOrderedDictionary >> includesKey: aKey [
 
 { #category : #accessing }
 StandardOrderedDictionary >> indexOfKey: aKey [
-	^ self indexOfKey: aKey ifAbsent: [0]
+	^ self
+		indexOfKey: aKey
+		ifAbsent: [0]
 ]
 
 { #category : #accessing }
@@ -305,6 +335,11 @@ StandardOrderedDictionary >> isIdentityDictionary [
 	^ false
 ]
 
+{ #category : #testing }
+StandardOrderedDictionary >> isOrderPreservingDictionary [
+	^ true
+]
+
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtIdentityValue: aValue [
 	^ self
@@ -323,7 +358,9 @@ StandardOrderedDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtIndex: anIndex [
-	^ self keyAtIndex: anIndex ifAbsent: [self errorInvalidIndex: anIndex]
+	^ self
+		keyAtIndex: anIndex
+		ifAbsent: [self errorInvalidIndex: anIndex]
 ]
 
 { #category : #accessing }
@@ -340,7 +377,9 @@ StandardOrderedDictionary >> keyAtValue: aValue [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keyAtValue: aValue ifAbsent: aBlock [
-	^ dictionary keyAtValue: aValue ifAbsent: aBlock
+	^ dictionary
+		keyAtValue: aValue
+		ifAbsent: aBlock
 ]
 
 { #category : #accessing }
@@ -354,12 +393,17 @@ StandardOrderedDictionary >> keyForIdentity: anObject [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keys [
-	^ orderedKeys copyFrom: 1 to: self size
+	^ orderedKeys
+		copyFrom: 1
+		to: self size
 ]
 
 { #category : #enumerating }
 StandardOrderedDictionary >> keysAndValuesDo: aBlock [
-	self keysDo: [:each | aBlock value: each value: (self at: each)]
+	self keysDo: [:each |
+		aBlock
+			value: each
+			value: (self at: each)]
 ]
 
 { #category : #removing }
@@ -368,14 +412,18 @@ StandardOrderedDictionary >> keysAndValuesRemove: aTwoArgumentBlock [
 
 	removedAssociations := OrderedCollection new.
 	self associationsDo: [:each |
-		(aTwoArgumentBlock value: each key value: each value)
+		(aTwoArgumentBlock
+			value: each key
+			value: each value)
 			ifTrue: [removedAssociations add: each]].
 	removedAssociations do: [:each | self removeKey: each key].
 ]
 
 { #category : #enumerating }
 StandardOrderedDictionary >> keysDo: aBlock [
-	1 to: self size do: [:i | aBlock value: (orderedKeys at: i)]
+	"use to:do: for speed"
+	1 to: self size do: [:i |
+		aBlock value: (orderedKeys at: i)]
 ]
 
 { #category : #accessing }
@@ -436,7 +484,7 @@ StandardOrderedDictionary >> printElementsOn: aStream [
 			aStream nextPutAll: 'size '.
 			self size printOn: aStream]
 		ifFalse: [
-			self associations doWithIndex: [:associaiton :i |
+			self associations withIndexDo: [:associaiton :i |
 				aStream
 					print: associaiton key;
 					nextPutAll: '->';
@@ -453,7 +501,10 @@ StandardOrderedDictionary >> remove: anObject ifAbsent: aBlock [
 
 { #category : #removing }
 StandardOrderedDictionary >> removeAll [
-	1 to: self size do: [:i | orderedKeys at: i put: nil].
+	1 to: self size do: [:i |
+		orderedKeys
+			at: i
+			put: nil].
 	dictionary removeAll.
 ]
 
@@ -471,7 +522,10 @@ StandardOrderedDictionary >> removeKey: aKey ifAbsent: aBlock [
 	| oldSize value |
 
 	oldSize := dictionary size.
-	value := dictionary removeKey: aKey ifAbsent: aBlock.
+	value :=
+		dictionary
+			removeKey: aKey
+			ifAbsent: aBlock.
 	dictionary size < oldSize
 		ifTrue: [self orderedKeysRemove: aKey].
 	^ value.
@@ -479,9 +533,9 @@ StandardOrderedDictionary >> removeKey: aKey ifAbsent: aBlock [
 
 { #category : #removing }
 StandardOrderedDictionary >> removeKeys: aKeyCollection [
-	"fast removal of multiple keys; returns self to avoid
+	"Fast removal of multiple keys; returns self to avoid
 	having to create a removed value collection and does not
-	raise errors"
+	raise errors."
 
 	aKeyCollection	size > 1
 		ifTrue: [| oldSize newOrderedKeys newOrderedKeysIndex |
@@ -504,9 +558,10 @@ StandardOrderedDictionary >> removeKeys: aKeyCollection [
 		ifFalse: [
 			aKeyCollection size = 1
 				ifTrue: [
+					"use #anyOne, because it can be a Set"
 					self
 						removeKey: aKeyCollection anyOne
-						ifAbsent: [nil]]].
+						ifAbsent: [nil]]]
 ]
 
 { #category : #enumerating }
@@ -532,5 +587,6 @@ StandardOrderedDictionary >> values [
 
 { #category : #enumerating }
 StandardOrderedDictionary >> valuesDo: aBlock [
-	self keysDo: [:each | aBlock value: (self at: each)]
+	self keysDo: [:each |
+		aBlock value: (self at: each)]
 ]
