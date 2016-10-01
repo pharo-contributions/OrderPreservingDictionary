@@ -41,7 +41,7 @@ OrderPreservingDictionaryTest >> testAssociationsSelect [
 	super testAssociationsSelect.
 
 	self assert:
-		(self dictionaryWithAssociations
+		(self dictionaryWithOrderedAssociations
 			defaultValue: self defaultValue;
 			associationsSelect: [:each | true]) defaultValue = self defaultValue.
 ]
@@ -81,7 +81,7 @@ OrderPreservingDictionaryTest >> testCollect [
 	super testCollect.
 
 	self assert:
-		(self dictionaryWithAssociations
+		(self dictionaryWithOrderedAssociations
 			defaultValue: self defaultValue;
 			collect: [:each | each]) defaultValue = self defaultValue.
 ]
@@ -92,7 +92,7 @@ OrderPreservingDictionaryTest >> testCopy [
 
 	super testCopy.
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	dictionary defaultValue: self defaultValue.
 	copy := dictionary copy.
 	self assert: copy defaultValue = dictionary defaultValue.
@@ -104,7 +104,7 @@ OrderPreservingDictionaryTest >> testCopyEmpty [
 
 	super testCopyEmpty.
 	
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	dictionary defaultValue: self defaultValue.
 	copy := dictionary copyEmpty.
 	self assert: copy defaultValue = dictionary defaultValue.
@@ -192,7 +192,7 @@ OrderPreservingDictionaryTest >> testNewWithDefaultValue [
 OrderPreservingDictionaryTest >> testRemoveKey [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	dictionary defaultValue: self defaultValue.
 	self orderedAssociations withIndexDo: [:each :i |
 		self assert: (dictionary removeKey: each key) = each value.
@@ -211,7 +211,7 @@ OrderPreservingDictionaryTest >> testSelect [
 	super testSelect.
 
 	self assert:
-		(self dictionaryWithAssociations
+		(self dictionaryWithOrderedAssociations
 			defaultValue: self defaultValue;
 			select: [:each | true]) defaultValue = self defaultValue.
 ]

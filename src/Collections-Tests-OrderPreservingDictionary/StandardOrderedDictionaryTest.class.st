@@ -5,7 +5,8 @@ Class {
 	#name : #StandardOrderedDictionaryTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'dictionaryAssociations'
+		'nonIdentityOrderedAssociations',
+		'identityOrderedAssociations'
 	],
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
@@ -94,14 +95,14 @@ StandardOrderedDictionaryTest >> assertKey: aKey wasRemovedfrom: aDictionary [
 ]
 
 { #category : #accessing }
-StandardOrderedDictionaryTest >> changedAssociations [
+StandardOrderedDictionaryTest >> changedOrderedAssociations [
 	^ self orderedAssociations collect: [:each | each key -> self newValue]
 ]
 
 { #category : #accessing }
-StandardOrderedDictionaryTest >> changedAssociationsFirst: anInteger [
+StandardOrderedDictionaryTest >> changedOrderedAssociationsFirst: anInteger [
 	"GS does not have #first:"
-	^ self changedAssociations
+	^ self changedOrderedAssociations
 		copyFrom: 1
 		to: anInteger
 ]
@@ -122,7 +123,7 @@ StandardOrderedDictionaryTest >> dictionaryClass [
 ]
 
 { #category : #accessing }
-StandardOrderedDictionaryTest >> dictionaryWithAssociations [
+StandardOrderedDictionaryTest >> dictionaryWithOrderedAssociations [
 	^ self dictionaryClass newFrom: self orderedAssociations
 ]
 
@@ -142,21 +143,22 @@ StandardOrderedDictionaryTest >> identityAbsentKey [
 ]
 
 { #category : #accessing }
-StandardOrderedDictionaryTest >> identityDictionaryAssociations [
+StandardOrderedDictionaryTest >> identityOrderedAssociations [
 	"The associations are copied so they can be modified in one test
 	without affecting others, but the keys and values are identical
 	each time for identity tests."
-	dictionaryAssociations
+	identityOrderedAssociations
 		ifNil: [| key |
 			key := 'testKey'.
-			dictionaryAssociations :=
+			"each key is #= equal but #== different"
+			identityOrderedAssociations :=
 				Array
 					with: (key := key copy) -> 'testValue'
 					with: (key := key copy) -> 'testValue3'
 					with: (key := key copy) -> 'testValue2'
 					with: (key := key copy) -> 'testValue4'].
 	"copy the associations, but not the keys and values"
-	^ dictionaryAssociations collect: [:each | each copy].
+	^ identityOrderedAssociations collect: [:each | each copy].
 ]
 
 { #category : #accessing }
@@ -187,25 +189,29 @@ StandardOrderedDictionaryTest >> nonIdentityAbsentKey [
 ]
 
 { #category : #accessing }
-StandardOrderedDictionaryTest >> nonIdentityDictionaryAssociations [
+StandardOrderedDictionaryTest >> nonIdentityOrderedAssociations [
 	"Associations are grouped out of their natural sort order and
-	are copied so can be modified in one test without affecting others,
-	but the keys and values are identical each time for identity tests."
-	dictionaryAssociations ifNil: [
-		dictionaryAssociations :=
-		Array
-			with: 'testKey'->'testValue'
-			with: 'testKey3'->'testValue3'
-			with: 'testKey2'->'testValue2'
-			with: 'testKey4'->'testValue4'].
-	^ dictionaryAssociations collect: [:each | each copy].
+	are copied they so can be modified in one test without affecting
+	others, but the keys and values are identical each time for
+	identity tests."
+	nonIdentityOrderedAssociations
+		ifNil: [
+			"each key is #= different"
+			nonIdentityOrderedAssociations :=
+				Array
+					with: 'testKey' -> 'testValue'
+					with: 'testKey3' -> 'testValue3'
+					with: 'testKey2' -> 'testValue2'
+					with: 'testKey4' -> 'testValue4'].
+	"copy the associations, but not the keys and values"
+	^ nonIdentityOrderedAssociations collect: [:each | each copy].
 ]
 
 { #category : #accessing }
 StandardOrderedDictionaryTest >> orderedAssociations [
 	self isTestingIdentityDictionary
-		ifTrue: [^ self identityDictionaryAssociations]
-		ifFalse: [^ self nonIdentityDictionaryAssociations]
+		ifTrue: [^ self identityOrderedAssociations]
+		ifFalse: [^ self nonIdentityOrderedAssociations]
 ]
 
 { #category : #accessing }
@@ -296,7 +302,7 @@ StandardOrderedDictionaryTest >> testAdd [
 			assertIsDictionary: dictionary
 			withOrderedAssociations: self orderedAssociations].
 
-	self changedAssociations withIndexDo: [:each :i | | old |
+	self changedOrderedAssociations withIndexDo: [:each :i | | old |
 		old := self orderedAssociations at: i.
 		self
 			assert: (dictionary add: each) == each;
@@ -305,7 +311,7 @@ StandardOrderedDictionaryTest >> testAdd [
 		self
 			assertIsDictionary: dictionary
 			withOrderedAssociations:
-				(self changedAssociationsFirst: i),
+				(self changedOrderedAssociationsFirst: i),
 				(self orderedAssociationsAllButFirst: i)].
 ]
 
@@ -330,11 +336,11 @@ StandardOrderedDictionaryTest >> testAddAll [
 		assertIsDictionary: dictionary
 		withOrderedAssociations: self orderedAssociations.
 
-	addedAssociations := self changedAssociations.
+	addedAssociations := self changedOrderedAssociations.
 	self assert: (dictionary addAll: addedAssociations) == addedAssociations.
 	self
 		assertIsDictionary: dictionary
-		withOrderedAssociations: self changedAssociations.
+		withOrderedAssociations: self changedOrderedAssociations.
 ]
 
 { #category : #tests }
@@ -426,7 +432,7 @@ StandardOrderedDictionaryTest >> testAssociationsDo [
 StandardOrderedDictionaryTest >> testAssociationsSelect [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedAssociations do: [:assoc | | selectedAssociations |
 		selectedAssociations := self orderedAssociations copyWithout: assoc.
 		self
@@ -553,7 +559,7 @@ StandardOrderedDictionaryTest >> testAtPut [
 			assertIsDictionary: dictionary
 			withOrderedAssociations: (self orderedAssociationsFirst: i)].
 
-	self changedAssociations withIndexDo: [:each :i |
+	self changedOrderedAssociations withIndexDo: [:each :i |
 		self assert:
 			(dictionary
 				at: each key
@@ -561,7 +567,7 @@ StandardOrderedDictionaryTest >> testAtPut [
 		self
 			assertIsDictionary: dictionary
 			withOrderedAssociations:
-				(self changedAssociationsFirst: i),
+				(self changedOrderedAssociationsFirst: i),
 				(self orderedAssociationsAllButFirst: i)].
 ]
 
@@ -595,7 +601,7 @@ StandardOrderedDictionaryTest >> testCapacity [
 StandardOrderedDictionaryTest >> testCollect [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self
 		assertIsDictionary:
 			(dictionary collect: [:each | each hash])
@@ -608,7 +614,7 @@ StandardOrderedDictionaryTest >> testCollect [
 StandardOrderedDictionaryTest >> testCopy [
 	| dictionary copy |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	copy := dictionary copy.
 	self
 		assertIsDictionary: dictionary
@@ -623,7 +629,7 @@ StandardOrderedDictionaryTest >> testCopy [
 StandardOrderedDictionaryTest >> testCopyEmpty [
 	| dictionary copy |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	copy := dictionary copyEmpty.
 	self
 		assertIsDictionary: dictionary
@@ -643,7 +649,7 @@ StandardOrderedDictionaryTest >> testDictionary [
 		assert: dictionary dictionary class == self internalDictionaryClass;
 		assert: dictionary dictionary = self emptyInternalDictionary.
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self
 		assert: dictionary dictionary class == self internalDictionaryClass;
 		assert: dictionary dictionary = self internalDictionaryWithAssociations.
@@ -704,7 +710,7 @@ StandardOrderedDictionaryTest >> testEqualsDictionary [
 	because these classes also implement isDictionary"
 	self
 		deny: self emptyDictionary = self emptyInternalDictionary;
-		deny: self dictionaryWithAssociations = self internalDictionaryWithAssociations
+		deny: self dictionaryWithOrderedAssociations = self internalDictionaryWithAssociations
 ]
 
 { #category : #tests }
@@ -912,7 +918,7 @@ StandardOrderedDictionaryTest >> testIsIdentityDictionary [
 { #category : #tests }
 StandardOrderedDictionaryTest >> testIsOrderPreservingDictionary [
 	self
-		assert: self dictionaryWithAssociations isOrderPreservingDictionary;
+		assert: self dictionaryWithOrderedAssociations isOrderPreservingDictionary;
 		deny: self internalDictionaryWithAssociations isOrderPreservingDictionary;
 		deny: self orderedAssociations isOrderPreservingDictionary
 ]
@@ -1077,7 +1083,7 @@ StandardOrderedDictionaryTest >> testKeysAndValuesDo [
 StandardOrderedDictionaryTest >> testKeysAndValuesRemove [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedAssociations withIndexDo: [:removedAssociation :i |
 		| unremovedAssociations |
 		unremovedAssociations :=
@@ -1187,7 +1193,7 @@ StandardOrderedDictionaryTest >> testOccurancesOf [
 StandardOrderedDictionaryTest >> testRemoveAll [
 	| dictionary removedKeys |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	removedKeys := dictionary keys.
 	self
 		deny: dictionary isEmpty;
@@ -1203,7 +1209,7 @@ StandardOrderedDictionaryTest >> testRemoveAll [
 StandardOrderedDictionaryTest >> testRemoveKey [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedAssociations withIndexDo: [:each :i |
 		self assert: (dictionary removeKey: each key) = each value.
 		self
@@ -1222,7 +1228,7 @@ StandardOrderedDictionaryTest >> testRemoveKey [
 StandardOrderedDictionaryTest >> testRemoveKeyIfAbsent [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedAssociations withIndexDo: [:each :i |
 		self assert:
 			(dictionary
@@ -1244,7 +1250,7 @@ StandardOrderedDictionaryTest >> testRemoveKeyIfAbsent [
 { #category : #tests }
 StandardOrderedDictionaryTest >> testRemoveKeys [
 	0 to: self orderedAssociations size do: [:i | | dictionary keysToRemove |
-		dictionary := self dictionaryWithAssociations.
+		dictionary := self dictionaryWithOrderedAssociations.
 
 		"make it a set to ensure it supports non-Sequenceable collections"
 		keysToRemove :=
@@ -1268,7 +1274,7 @@ StandardOrderedDictionaryTest >> testRemoveKeys [
 StandardOrderedDictionaryTest >> testSelect [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedValues do: [:value | | selectedValues |
 		selectedValues := self orderedValues copyWithout: value.
 		self

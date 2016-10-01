@@ -81,7 +81,7 @@ OrderPreservingStringDictionaryTest >> testKeyAtValue [
 OrderPreservingStringDictionaryTest >> testRemoveKey [
 	| dictionary |
 
-	dictionary := self dictionaryWithAssociations.
+	dictionary := self dictionaryWithOrderedAssociations.
 	self orderedAssociations withIndexDo: [:each :i |
 		self assert: (dictionary removeKey: each key) = each value.
 		self
