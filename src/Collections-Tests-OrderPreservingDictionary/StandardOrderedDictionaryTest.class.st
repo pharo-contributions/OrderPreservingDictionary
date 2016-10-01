@@ -146,20 +146,21 @@ StandardOrderedDictionaryTest >> identityAbsentKey [
 
 { #category : #accessing }
 StandardOrderedDictionaryTest >> identityOrderedAssociations [
-	"The associations are copied so they can be modified in one test
-	without affecting others, but the keys and values are identical
-	each time for identity tests."
+	"Returns ordered associations to use for identity dictionaries.
+	The keys are all #= equal but #== different, so only an
+	identity dictionary will be able to distinguish them."
 	identityOrderedAssociations
 		ifNil: [| key |
 			key := 'testKey'.
-			"each key is #= equal but #== different"
 			identityOrderedAssociations :=
 				Array
 					with: (key := key copy) -> 'testValue'
 					with: (key := key copy) -> 'testValue3'
 					with: (key := key copy) -> 'testValue2'
 					with: (key := key copy) -> 'testValue4'].
-	"copy the associations, but not the keys and values"
+	"return copies of the associations so they can be safely modified
+	in one test without affecting another, but do not copy the keys
+	and values"
 	^ identityOrderedAssociations collect: [:each | each copy].
 ]
 
@@ -192,20 +193,20 @@ StandardOrderedDictionaryTest >> nonIdentityAbsentKey [
 
 { #category : #accessing }
 StandardOrderedDictionaryTest >> nonIdentityOrderedAssociations [
-	"Associations are grouped out of their natural sort order and
-	are copied they so can be modified in one test without affecting
-	others, but the keys and values are identical each time for
-	identity tests."
+	"Returns ordered associations to use for non-identity dictionaries.
+	The keys are all #= and #== different and are returned out of their
+	natural sort order."
 	nonIdentityOrderedAssociations
 		ifNil: [
-			"each key is #= different"
 			nonIdentityOrderedAssociations :=
 				Array
 					with: 'testKey' -> 'testValue'
 					with: 'testKey3' -> 'testValue3'
 					with: 'testKey2' -> 'testValue2'
 					with: 'testKey4' -> 'testValue4'].
-	"copy the associations, but not the keys and values"
+	"return copies of the associations so they can be safely modified
+	in one test without affecting another, but do not copy the keys
+	and values"
 	^ nonIdentityOrderedAssociations collect: [:each | each copy].
 ]
 
