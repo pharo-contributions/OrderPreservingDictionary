@@ -28,10 +28,12 @@ OrderPreservingDictionaryTest >> newDefaultValue [
 OrderPreservingDictionaryTest >> testAssociationAt [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
-	self
-		assert: (dictionary associationAt: self absentKey) isNil;
-		assert: (dictionary associationAt: self singleKey) = self singleAssociation.
+	dictionary := self emptyDictionary.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary associationAt: each key) isNil.
+
+		dictionary add: each.
+		self assert: (dictionary associationAt: each key) = each].
 ]
 
 { #category : #tests }
@@ -48,25 +50,30 @@ OrderPreservingDictionaryTest >> testAssociationsSelect [
 OrderPreservingDictionaryTest >> testAt [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
+	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
-	self
-		assert: (dictionary at: self absentKey) = self defaultValue;
-		assert: (dictionary at: self singleKey) = self singleValue.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary at: each key) = self defaultValue.
+
+		dictionary add: each.
+		self assert: (dictionary at: each key) = each value].
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCapacity [
-	| defaultCapacity |
+	| defaultCapacity dictionary |
 
 	super testCapacity.
+
 	defaultCapacity := self defaultCapacity.
-	self
-		assert: (self dictionaryClass defaultValue: nil) capacity >= defaultCapacity;
-		assert:
-			(self dictionaryClass
-				new: defaultCapacity * 2
-				withDefaultValue: nil) capacity >= (defaultCapacity * 2).
+	dictionary := self dictionaryClass defaultValue: nil.
+	self assert: dictionary capacity >= defaultCapacity.
+
+	dictionary :=
+		self dictionaryClass
+			new: defaultCapacity * 2
+			withDefaultValue: nil.
+	self assert: dictionary capacity >= (defaultCapacity * 2).
 ]
 
 { #category : #tests }
@@ -81,117 +88,122 @@ OrderPreservingDictionaryTest >> testCollect [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCopy [
-	| dictionary |
+	| dictionary copy |
 
 	super testCopy.
-	(dictionary := self dictionaryWithAssociations)
-		defaultValue: self defaultValue.
-	self assert: dictionary copy defaultValue = dictionary defaultValue.
+
+	dictionary := self dictionaryWithAssociations.
+	dictionary defaultValue: self defaultValue.
+	copy := dictionary copy.
+	self assert: copy defaultValue = dictionary defaultValue.
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCopyEmpty [
-	| dictionary |
+	| dictionary copy |
 
 	super testCopyEmpty.
 	
-	(dictionary := self dictionaryWithAssociations)
-		defaultValue: self defaultValue.
-	self assert: dictionary copy defaultValue = self defaultValue.
+	dictionary := self dictionaryWithAssociations.
+	dictionary defaultValue: self defaultValue.
+	copy := dictionary copyEmpty.
+	self assert: copy defaultValue = dictionary defaultValue.
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testDefaultValue [
 	| dictionary |
 	
-	dictionary :=  self dictionaryClass new: 10 withDefaultValue: self defaultValue.
-	self assert: dictionary defaultValue = self defaultValue.
-
 	dictionary := self dictionaryClass defaultValue: self defaultValue.
-	self assert: dictionary defaultValue = self defaultValue.
-
-	dictionary defaultValue: self newDefaultValue.
-	self assert: dictionary defaultValue = self newDefaultValue.
-
-	dictionary := (self dictionaryClass newFrom: dictionary).
 	self
-		assert: dictionary defaultValue = self newDefaultValue;
-		assert: dictionary copy defaultValue = self newDefaultValue;
-		assert: dictionary copyEmpty defaultValue = self newDefaultValue.
+		assert: dictionary defaultValue = self defaultValue;
+		assert: (dictionary defaultValue: self newDefaultValue) == dictionary;
+		assert: dictionary defaultValue = self newDefaultValue.
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtIdentityValue [
-	| dictionary value |
+	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
+	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
-	value := dictionary at: self singleKey.
-	self
-		assert: (dictionary keyAtIdentityValue: self absentValue) = self defaultValue;
-		assert: (dictionary keyAtIdentityValue: value copy) = self defaultValue;
-		assert: (dictionary keyAtValue: value) = self singleKey.
+	self orderedAssociations do: [:each |
+		self assert:
+			(dictionary keyAtIdentityValue: each value) = self defaultValue.
+
+		dictionary add: each.
+		self assert:
+			(dictionary keyAtIdentityValue: each value) = each key.
+		self assert:
+			(dictionary keyAtIdentityValue: each value copy) = self defaultValue].
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtIndex [
 	| dictionary |
 
-	(dictionary := self emptyDictionary)
-		defaultValue: self defaultValue.
-	self
-		assert: (dictionary keyAtIndex: 0) = self defaultValue;
-		assert: (dictionary keyAtIndex: 1) = self defaultValue.
+	dictionary := self emptyDictionary.
+	dictionary defaultValue: self defaultValue.
+	self assert: (dictionary keyAtIndex: 0) = self defaultValue.
+	self orderedAssociations withIndexDo: [:each :i |
+		self assert: (dictionary keyAtIndex: i) = self defaultValue.
 
-	(dictionary := self dictionaryWithAssociations)
-		defaultValue: self defaultValue.
-	self dictionaryKeys withIndexDo: [:each :i |
-		self assert: (dictionary keyAtIndex: i) = each].
-	self
-		assert: (dictionary keyAtIndex: 0) = self defaultValue;
-		assert: (dictionary keyAtIndex: dictionary size + 1) = self defaultValue.
+		dictionary add: each.
+		self assert: (dictionary keyAtIndex: i) = each key].
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtValue [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
+	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
-	self
-		assert: (dictionary keyAtValue: self absentValue) = self defaultValue;
-		assert: (dictionary keyAtValue: self singleValue) = self singleKey.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary keyAtValue: each value) = self defaultValue.
+
+		dictionary add: each.
+		self assert: (dictionary keyAtValue: each value) = each key].
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testNewFrom [
-	| dictionaryOne dictionaryTwo |
+	| dictionary copy |
 
 	super testNewFrom.
-	(dictionaryOne := self dictionaryClass newFrom: self dictionaryAssociations)
-		defaultValue: self defaultValue.
-	dictionaryTwo := self dictionaryClass newFrom: dictionaryOne.
-	self
-		assertIsDictionary: dictionaryTwo withAssociations: self dictionaryAssociations;
-		assert: dictionaryTwo defaultValue = self defaultValue.
+
+	dictionary := self dictionaryClass newFrom: self orderedAssociations.
+	dictionary defaultValue: self defaultValue.
+	copy := self dictionaryClass newFrom: dictionary.
+	self assert: copy defaultValue = dictionary defaultValue.
+]
+
+{ #category : #tests }
+OrderPreservingDictionaryTest >> testNewWithDefaultValue [
+	| dictionary |
+
+	dictionary :=
+		self dictionaryClass
+			new: 10
+			withDefaultValue: self defaultValue.
+	self assert: dictionary defaultValue = self defaultValue.
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testRemoveKey [
-	| dictionary associationsToRemove |
+	| dictionary |
 
-	(dictionary := self dictionaryWithAssociations)
-		defaultValue: self defaultValue.
-	self assert: (dictionary removeKey: self absentKey) = self defaultValue.
-	associationsToRemove := self dictionaryAssociations asOrderedCollection.
-	[associationsToRemove notEmpty]
-		whileTrue: [ | removed |
-			removed := associationsToRemove removeFirst.
-			self
-				assert: (dictionary removeKey: removed key) = removed value;
-				assert: (dictionary removeKey: removed key) = self defaultValue;
-				assertRemovedKey: removed key from: dictionary;
-				assert: dictionary keys = (associationsToRemove collect: [:each | each key]) asArray].
+	dictionary := self dictionaryWithAssociations.
+	dictionary defaultValue: self defaultValue.
+	self orderedAssociations withIndexDo: [:each :i |
+		self assert: (dictionary removeKey: each key) = each value.
+		self
+			assertKey: each key
+			wasRemovedfrom: dictionary.
+		self
+			assertIsDictionary: dictionary
+			withOrderedAssociations: (self orderedAssociationsAllButFirst: i).
+
+		self assert: (dictionary removeKey: each key) = self defaultValue]
 ]
 
 { #category : #tests }

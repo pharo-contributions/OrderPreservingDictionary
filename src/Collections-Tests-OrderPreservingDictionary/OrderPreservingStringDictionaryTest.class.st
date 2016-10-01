@@ -18,73 +18,78 @@ OrderPreservingStringDictionaryTest >> dictionaryClass [
 OrderPreservingStringDictionaryTest >> testAssociationAt [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
-	self
-		assert: (dictionary associationAt: self absentKey) isNil;
-		assert: (dictionary associationAt: self singleKey) = self singleAssociation.
+	dictionary := self emptyDictionary.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary associationAt: each key) isNil.
+	
+		dictionary add: each.
+		self assert: (dictionary associationAt: each key) = each].
 ]
 
 { #category : #tests }
 OrderPreservingStringDictionaryTest >> testAt [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
-	self
-		assert: (dictionary at: self absentKey) isEmpty;
-		assert: (dictionary at: self singleKey) = self singleValue.
+	dictionary := self emptyDictionary.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary at: each key) = ''.
+
+		dictionary add: each.
+		self assert: (dictionary at: each key) = each value].
 ]
 
 { #category : #tests }
 OrderPreservingStringDictionaryTest >> testKeyAtIdentityValue [
-	| dictionary value |
+	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
-	value := dictionary at: self singleKey.
-	self
-		assert: (dictionary keyAtIdentityValue: self absentValue) isEmpty;
-		assert: (dictionary keyAtIdentityValue: value copy) isEmpty;
-		assert: (dictionary keyAtValue: value) = self singleKey.
+	dictionary := self emptyDictionary.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary keyAtIdentityValue: each value) = ''.
+
+		dictionary add: each.
+		self
+			assert: (dictionary keyAtIdentityValue: each value) = each key;
+			assert: (dictionary keyAtIdentityValue: each value copy) = ''].
 ]
 
 { #category : #tests }
 OrderPreservingStringDictionaryTest >> testKeyAtIndex [
 	| dictionary |
 
-	self
-		assert: (self emptyDictionary keyAtIndex: 0) isEmpty;
-		assert: (self emptyDictionary keyAtIndex: 1) isEmpty.
+	dictionary := self emptyDictionary.
+	self assert: (dictionary keyAtIndex: 0) = ''.
+	self orderedAssociations withIndexDo: [:each :i |
+		self assert: (dictionary keyAtIndex: i) = ''.
 
-	dictionary := self dictionaryWithAssociations.
-	self dictionaryKeys withIndexDo: [:each :i |
-		self assert: (dictionary keyAtIndex: i) = each].
-	self
-		assert: (dictionary keyAtIndex: 0) isEmpty;
-		assert: (dictionary keyAtIndex: dictionary size + 1) isEmpty.
+		dictionary add: each.
+		self assert: (dictionary keyAtIndex: i) = each key].
 ]
 
 { #category : #tests }
 OrderPreservingStringDictionaryTest >> testKeyAtValue [
 	| dictionary |
 
-	dictionary := self dictionaryWithSingleAssociation.
-	self
-		assert: (dictionary keyAtValue: self absentValue) isEmpty;
-		assert: (dictionary keyAtValue: self singleValue) = self singleKey.
+	dictionary := self emptyDictionary.
+	self orderedAssociations do: [:each |
+		self assert: (dictionary keyAtValue: each value) = ''.
+
+		dictionary add: each.
+		self assert: (dictionary keyAtValue: each value) = each key].
 ]
 
 { #category : #tests }
 OrderPreservingStringDictionaryTest >> testRemoveKey [
-	| dictionary associationsToRemove |
+	| dictionary |
 
 	dictionary := self dictionaryWithAssociations.
-	self assert: (dictionary removeKey: self absentKey) isEmpty.
-	associationsToRemove := self dictionaryAssociations asOrderedCollection.
-	[associationsToRemove notEmpty]
-		whileTrue: [ | removed |
-			removed := associationsToRemove removeFirst.
-			self
-				assert: (dictionary removeKey: removed key) = removed value;
-				assert: (dictionary removeKey: removed key) isEmpty;
-				assertRemovedKey: removed key from: dictionary;
-				assert: dictionary keys = (associationsToRemove collect: [:each | each key]) asArray].
+	self orderedAssociations withIndexDo: [:each :i |
+		self assert: (dictionary removeKey: each key) = each value.
+		self
+			assertKey: each key
+			wasRemovedfrom: dictionary.
+		self
+			assertIsDictionary: dictionary
+			withOrderedAssociations: (self orderedAssociationsAllButFirst: i).
+
+		self assert: (dictionary removeKey: each key) = '']
 ]
