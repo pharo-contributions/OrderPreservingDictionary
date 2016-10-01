@@ -428,7 +428,9 @@ StandardOrderedDictionary >> keysDo: aBlock [
 
 { #category : #accessing }
 StandardOrderedDictionary >> keysSortedSafely [
-	^ dictionary keysSortedSafely
+	"GS returns a SortedCollection instead of an Array, so this is
+	reimplemented for portability"
+	^ dictionary keys sort
 ]
 
 { #category : #private }
