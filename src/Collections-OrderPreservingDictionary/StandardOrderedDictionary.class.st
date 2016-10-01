@@ -486,11 +486,11 @@ StandardOrderedDictionary >> printElementsOn: aStream [
 			aStream nextPutAll: 'size '.
 			self size printOn: aStream]
 		ifFalse: [
-			self associations withIndexDo: [:associaiton :i |
+			self associations withIndexDo: [:each :i |
 				aStream
-					print: associaiton key;
+					print: each key;
 					nextPutAll: '->';
-					print: associaiton value.
+					print: each value.
 				(i < self size)
 					ifTrue: [aStream space]]].
 	aStream nextPut: $).
