@@ -4,11 +4,6 @@ Class {
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
 
-{ #category : #testing }
-StandardOrderedIdentityDictionaryTest class >> shouldInheritSelectors [
-	^ true
-]
-
 { #category : #accessing }
 StandardOrderedIdentityDictionaryTest >> dictionaryClass [
 	^ StandardOrderedIdentityDictionary

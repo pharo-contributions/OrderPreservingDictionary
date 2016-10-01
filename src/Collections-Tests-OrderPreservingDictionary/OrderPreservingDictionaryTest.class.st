@@ -4,11 +4,6 @@ Class {
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
 
-{ #category : #testing }
-OrderPreservingDictionaryTest class >> shouldInheritSelectors [
-	^ true
-]
-
 { #category : #accessing }
 OrderPreservingDictionaryTest >> defaultValue [
 	^ 'defaultValue'

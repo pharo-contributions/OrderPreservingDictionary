@@ -1,6 +1,3 @@
-"
-This class tests the OrderPreservingDictionary class using an empty dictionary, one with a single association and one with multiple associations.
-"
 Class {
 	#name : #StandardOrderedDictionaryTest,
 	#superclass : #TestCase,
@@ -10,6 +7,11 @@ Class {
 	],
 	#category : #'Collections-Tests-OrderPreservingDictionary'
 }
+
+{ #category : #testing }
+StandardOrderedDictionaryTest class >> shouldInheritSelectors [
+	^ true
+]
 
 { #category : #accessing }
 StandardOrderedDictionaryTest >> absentKey [
@@ -869,10 +871,7 @@ StandardOrderedDictionaryTest >> testIncludesKey [
 		self deny: (dictionary includesKey: each key).
 
 		dictionary add: each.
-		self assert: (dictionary includesKey: each key).
-		self isTestingIdentityDictionary
-			ifTrue: [self deny: (dictionary includesKey: each key copy)]
-			ifFalse: [self assert: (dictionary includesKey: each key copy)]].
+		self assert: (dictionary includesKey: each key)].
 ]
 
 { #category : #tests }
