@@ -72,7 +72,20 @@ StandardOrderedDictionaryTest >> assertIsDictionary: anObject withOrderedAssocia
 	with the specified ordered associations"
 	self
 		assert: anObject class == self dictionaryClass;
-		assert: anObject associations asArray = anAssociationCollection asArray
+		assert: anObject orderedKeys size >= anAssociationCollection size;
+		assert: anObject associations size = anAssociationCollection size.
+
+	anAssociationCollection withIndexDo: [:each :i |
+		self isTestingIdentityDictionary
+			ifTrue: [
+				self
+					assert: (anObject orderedKeys at: i) == each key;
+					assert: (anObject associations at: i) key == each key]
+			ifFalse: [
+				self
+					assert: (anObject orderedKeys at: i) = each key;
+					assert: (anObject associations at: i) key = each key].
+		self assert: (anObject associations at: i) value = each value].
 ]
 
 { #category : #assertions }
@@ -490,8 +503,6 @@ StandardOrderedDictionaryTest >> testAtIfAbsentPut [
 			(dictionary
 				at: each key
 				ifAbsentPut: [each value]) = each value.
-
-		dictionary add: each.
 		self assert:
 			(dictionary
 				at: each key
