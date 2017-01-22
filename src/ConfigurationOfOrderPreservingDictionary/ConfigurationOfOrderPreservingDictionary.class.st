@@ -15,19 +15,21 @@ Class {
 	#category : #ConfigurationOfOrderPreservingDictionary
 }
 
+{ #category : #'development support' }
+ConfigurationOfOrderPreservingDictionary class >> DevelopmentSupport [
+
+"See the methods in the 'development support' category on the class-side of MetacelloBaseConfiguration. Decide what development support methods you would like to use and copy them the the class-side of your configuration."
+	<apiDocumentation>
+]
+
 { #category : #private }
-ConfigurationOfOrderPreservingDictionary class >> bootstrapPackage: aString from: aPath [ 
-	| repository version |
-	repository := MCHttpRepository
-				location: aPath
-				user: ''
-				password: ''.
-	repository
-		versionReaderForFileNamed: aString , '.mcz'
-		do: [:reader | 
-			version := reader version.
-			version load.
-			version workingCopy repositoryGroup addRepository: repository]
+ConfigurationOfOrderPreservingDictionary class >> baseConfigurationClassIfAbsent: aBlock [
+
+	^Smalltalk
+		at: #'ConfigurationOf'
+		ifAbsent: [ 
+			self ensureMetacelloBaseConfiguration.
+			Smalltalk at: #'ConfigurationOf' ifAbsent: aBlock ].
 ]
 
 { #category : #catalog }
@@ -56,21 +58,26 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 { #category : #private }
 ConfigurationOfOrderPreservingDictionary class >> ensureMetacello [
-	"Bootstrap Gofer (if necessary), bootstrap ConfigurationOfMetacello (using old Gofer API), then load the latest 
-	version of Metacello itself."
 
-	Smalltalk at: #MetacelloProject ifAbsent: [
-		Smalltalk at: #Gofer ifAbsent: [
-			"Current version of Gofer from which to bootstrap - as of 1.0-beta.21"
-			self bootstrapPackage: 'Gofer-Core-lr.115' from: 'http://seaside.gemstone.com/ss/metacello' ].
-		Smalltalk at: #Gofer ifPresent: [:goferClass | | gofer |
-			gofer := goferClass new
-				url: 'http://seaside.gemstone.com/ss/metacello';
-				yourself.
-			[ gofer addPackage: 'ConfigurationOfMetacello' ] on: Warning do: [:ex | ex resume ].
-			gofer load ].
-		"load 'default' group of Metacello"
-		(Smalltalk at: #ConfigurationOfMetacello) perform: #load ]
+	(self baseConfigurationClassIfAbsent: []) ensureMetacello
+]
+
+{ #category : #private }
+ConfigurationOfOrderPreservingDictionary class >> ensureMetacelloBaseConfiguration [
+  Smalltalk
+    at: #'ConfigurationOf'
+    ifAbsent: [ 
+      | repository version |
+      repository := MCHttpRepository
+        location: 'http://smalltalkhub.com/mc/dkh/metacello/main'
+        user: ''
+        password: ''.
+      repository
+        versionReaderForFileNamed: 'Metacello-Base-dkh.107'
+        do: [ :reader | 
+          version := reader version.
+          version load.
+          version workingCopy repositoryGroup addRepository: repository ] ]
 ]
 
 { #category : #'metacello tool support' }
@@ -80,19 +87,24 @@ ConfigurationOfOrderPreservingDictionary class >> isMetacelloConfig [
 	^true
 ]
 
-{ #category : #'metacello tool support' }
-ConfigurationOfOrderPreservingDictionary class >> lastMetacelloVersionLoad [
-	"Answer the last version loaded and the list of packages loaded for that version."
+{ #category : #loading }
+ConfigurationOfOrderPreservingDictionary class >> load [
+	"Load the #stable version defined for this platform. The #stable version is the version that is recommended to be used on this platform."
 
-	LastVersionLoad == nil ifTrue: [ LastVersionLoad := nil -> 'default' ].
-	^LastVersionLoad
+	"self load"
+
+	<apiDocumentation>
+	^(self project version: #stable) load
 ]
 
 { #category : #loading }
-ConfigurationOfOrderPreservingDictionary class >> load [
-	"self load"
+ConfigurationOfOrderPreservingDictionary class >> loadBleedingEdge [
+	"Load the latest versions of the mcz files defined for this project. It is not likely that the #bleedingEdge has been tested."
 
-	^self project latestVersion load
+	"self loadBleedingEdge"
+
+	<apiDocumentation>
+	^(self project version: #bleedingEdge) load
 ]
 
 { #category : #loading }
@@ -103,16 +115,18 @@ ConfigurationOfOrderPreservingDictionary class >> loadDefault [
 ]
 
 { #category : #loading }
-ConfigurationOfOrderPreservingDictionary class >> loadMostRecentCoreWithTests [
-	^self project lastVersion load: #('Core' 'Tests')
+ConfigurationOfOrderPreservingDictionary class >> loadDevelopment [
+	"Load the #development version defined for this platform. The #development version will change over time and is not expected to be stable."
+
+	"self loadDevelopment"
+
+	<apiDocumentation>
+	^(self project version: #development) load
 ]
 
-{ #category : #'metacello tool support' }
-ConfigurationOfOrderPreservingDictionary class >> metacelloVersion: versionString loads: anArrayOrString [
-	"Stash the last version loaded and the list of packages loaded for that version. The list
-	 of packages will be used by the tools when doing 'Load Package Version'"
-
-	LastVersionLoad := versionString -> anArrayOrString
+{ #category : #loading }
+ConfigurationOfOrderPreservingDictionary class >> loadMostRecentCoreWithTests [
+	^self project lastVersion load: #('Core' 'Tests')
 ]
 
 { #category : #accessing }
@@ -121,10 +135,18 @@ ConfigurationOfOrderPreservingDictionary class >> project [
 	^self new project
 ]
 
-{ #category : #'unloading Metacello' }
-ConfigurationOfOrderPreservingDictionary class >> unloadMetacello [
+{ #category : #'development support' }
+ConfigurationOfOrderPreservingDictionary class >> validate [
+	"Check the configuration for Errors, Critical Warnings, and Warnings (see class comment for MetacelloMCVersionValidator for more information). 
+	Errors identify specification issues that will result in unexpected behaviour when you load the configuration. 
+	Critical Warnings identify specification issues that may result in unexpected behavior when you load the configuration.
+	Warnings identify specification issues that are technically correct, but are worth take a look at."
 
-	Smalltalk at: #ConfigurationOfMetacello ifPresent: [:cls | cls unloadMetacello ]
+	"self validate"
+
+	<apiDocumentation>
+	self ensureMetacello.
+	^ ((Smalltalk at: #MetacelloToolBox) validateConfiguration: self debug: #() recurse: false) explore
 ]
 
 { #category : #baselines }
@@ -145,27 +167,55 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 			group: 'Core' with: #('Collections-OrderPreservingDictionary');
 			group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary'). ].
 		
-		"loads methods needed for gemstone"
-		spec
-			for: #'gemstone'
-			do: [
-				spec
-					package: 'Collections-OrderPreservingDictionary'
-					with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
-				spec
-					package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-					with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
+	"loads gemstone compatibility methods"
+	spec
+		for: #gemstone
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary'
+				with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
+
+	"load GT extensions"
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary'
+				with: [ spec requires: 'Collections-OrderPreservingDictionary-GTExtensions' ].
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
 ]
 
 { #category : #baselines }
-ConfigurationOfOrderPreservingDictionary >> baseline131: spec [ 
-        <version: '1.3.1-baseline' imports: #('1.0-baseline')>
-        
-        spec for: #'gemstone' do: [
-                spec blessing: #baseline.
-                spec
-                     package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-                     with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1'. ].
+ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
+	<version: '1.3.1-baseline' imports: #('1.0-baseline')>
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.1' ]
+]
+
+{ #category : #accessing }
+ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
+    "Edit to return a collection of any custom attributes e.g. for conditional loading: Array with: #'Condition1' with: #'Condition2.
+	For more information see: http://code.google.com/p/metacello/wiki/CustomProjectAttrributes "
+
+	(Smalltalk includesKey: #GTInspector)
+		ifTrue: [ ^ #(gt) ]
+		ifFalse: [ ^ #() ]
 ]
 
 { #category : #'symbolic versions' }
@@ -178,15 +228,14 @@ ConfigurationOfOrderPreservingDictionary >> development: spec [
 
 { #category : #accessing }
 ConfigurationOfOrderPreservingDictionary >> project [
-
-	^ project ifNil: [ | constructor |
-		"Bootstrap Metacello if it is not already loaded"
-		self class ensureMetacello.
-		"Construct Metacello project"
-		constructor := (Smalltalk at: #MetacelloVersionConstructor) on: self.
-		project := constructor project.
-		project loadType: #linear. "change to #atomic if desired"
-		project ]
+    ^ project
+        ifNil: [ 
+            "Bootstrap Metacello if it is not already loaded"
+            self class ensureMetacello.
+            project := MetacelloMCProject new projectAttributes: self customProjectAttributes.	"Create the Metacello project"
+            (Smalltalk at: #'MetacelloVersionConstructor') on: self project: project.	"Construct the project"
+            project loadType: #'linear'.	"change to #atomic if desired"
+            project ]
 ]
 
 { #category : #'symbolic versions' }
