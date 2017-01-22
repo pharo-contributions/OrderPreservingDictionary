@@ -184,7 +184,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 		do: [
 			spec
 				package: 'Collections-OrderPreservingDictionary'
-				with: [ spec requires: 'Collections-OrderPreservingDictionary-GTExtensions' ].
+				with: [ spec includes: 'Collections-OrderPreservingDictionary-GTExtensions' ].
 			spec
 				package: 'Collections-OrderPreservingDictionary-GTExtensions'
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
