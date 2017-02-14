@@ -331,6 +331,12 @@ StandardOrderedDictionary >> isDictionary [
 ]
 
 { #category : #testing }
+StandardOrderedDictionary >> isEmpty [
+	"Squeak's Collection>>#isEmpty is inefficient"
+	^ self size = 0
+]
+
+{ #category : #testing }
 StandardOrderedDictionary >> isIdentityDictionary [
 	^ false
 ]
