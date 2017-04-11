@@ -283,8 +283,9 @@ StandardOrderedDictionary >> includes: anObject [
 
 { #category : #testing }
 StandardOrderedDictionary >> includesAssociation: anAssociation [
-	"IndentityDictionary>>includesAssociation: works differently on GS testing both key
-	and value identity, so it is reimplemented here to behave like Pharo/Squeak"
+	"IndentityDictionary>>includesAssociation: works differently on GS
+	testing both key and value identity, so it is reimplemented here
+	to behave like Pharo/Squeak"
 	^ (dictionary
 		at: anAssociation key
 		ifAbsent: [^ false]) = anAssociation value
@@ -446,7 +447,7 @@ StandardOrderedDictionary >> orderedKeys [
 
 { #category : #private }
 StandardOrderedDictionary >> orderedKeysIdentityIndexOf: aKey [
-	"GS does not have identityIndexOf:"
+	"GS does not have #identityIndexOf:"
 	1 to: orderedKeys size do: [:i |
 		(orderedKeys at: i) == aKey
 			ifTrue: [^ i]].
