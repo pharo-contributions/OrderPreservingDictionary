@@ -208,6 +208,24 @@ ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
 				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.1' ]
 ]
 
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline137: spec [
+	<version: '1.3.7-baseline' imports: #('1.0-baseline')>
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.2' ]
+]
+
 { #category : #accessing }
 ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
     "Edit to return a collection of any custom attributes e.g. for conditional loading: Array with: #'Condition1' with: #'Condition2.
@@ -222,7 +240,7 @@ ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.3.1-baseline'.
+	spec for: #'common' version: '1.3.7-baseline'.
 
 ]
 
@@ -242,7 +260,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.3.6'.
+	spec for: #'common' version: '1.3.7'.
 
 ]
 
@@ -472,5 +490,16 @@ ConfigurationOfOrderPreservingDictionary >> version136: spec [
                 spec blessing: #release.
 			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.30'.
 			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.25'.
+                ].
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version137: spec [ 
+        <version: '1.3.7' imports: #('1.3.7-baseline')>
+
+        spec for: #common do: [
+                spec blessing: #release.
+			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.31'.
+			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.26'.
                 ].
 ]
