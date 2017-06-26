@@ -1,0 +1,1 @@
+An order-preserving dictionary that returns a configurable default value (nil by default) when an absent key or value is requested from it rather than raising an exception.

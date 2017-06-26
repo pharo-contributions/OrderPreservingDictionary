@@ -1,0 +1,3 @@
+comparing
+= anObject
+	^ orderPreservingDictionary = anObject

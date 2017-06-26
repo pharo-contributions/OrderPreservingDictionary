@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "monty 11/21/2014 03:46",
+	"super" : "OrderPreservingDictionary",
+	"category" : "Collections-OrderPreservingDictionary",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "OrderPreservingIdentityDictionary",
+	"type" : "normal"
+}

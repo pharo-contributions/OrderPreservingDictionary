@@ -1,0 +1,1 @@
+A lazy version of OrderPreservingIdentityStringDictionary that only allocates memory when modified.

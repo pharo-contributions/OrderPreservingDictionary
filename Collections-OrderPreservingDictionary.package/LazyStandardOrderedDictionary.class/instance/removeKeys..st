@@ -1,0 +1,3 @@
+removing
+removeKeys: aKeyCollection
+	self copiedOrderPreservingDictionary removeKeys: aKeyCollection

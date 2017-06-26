@@ -1,0 +1,3 @@
+adding
+addAll: anAssociationCollection
+	^ self copiedOrderPreservingDictionary addAll: anAssociationCollection

@@ -1,0 +1,3 @@
+enumerating
+associationsDo: aBlock
+	orderPreservingDictionary associationsDo: aBlock

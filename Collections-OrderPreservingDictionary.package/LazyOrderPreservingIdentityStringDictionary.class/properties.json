@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "monty 4/11/2017 01:26",
+	"super" : "LazyOrderPreservingStringDictionary",
+	"category" : "Collections-OrderPreservingDictionary",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"EmptyOrderPreservingIdentityStringDictionary"
+	],
+	"instvars" : [ ],
+	"name" : "LazyOrderPreservingIdentityStringDictionary",
+	"type" : "normal"
+}
