@@ -1,0 +1,6 @@
+tests
+testIsOrderPreservingDictionary
+	self
+		assert: self dictionaryWithOrderedAssociations isOrderPreservingDictionary;
+		deny: self internalDictionaryWithAssociations isOrderPreservingDictionary;
+		deny: self orderedAssociations isOrderPreservingDictionary

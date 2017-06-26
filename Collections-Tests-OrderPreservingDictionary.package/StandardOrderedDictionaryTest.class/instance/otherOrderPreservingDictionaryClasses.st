@@ -1,0 +1,3 @@
+accessing
+otherOrderPreservingDictionaryClasses
+	^ StandardOrderedDictionary withAllSubclasses copyWithout: self dictionaryClass

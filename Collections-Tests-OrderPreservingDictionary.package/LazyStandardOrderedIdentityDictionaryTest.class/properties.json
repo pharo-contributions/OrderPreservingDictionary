@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "",
+	"super" : "StandardOrderedIdentityDictionaryTest",
+	"category" : "Collections-Tests-OrderPreservingDictionary",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "LazyStandardOrderedIdentityDictionaryTest",
+	"type" : "normal"
+}

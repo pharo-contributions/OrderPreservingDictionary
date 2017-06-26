@@ -1,0 +1,14 @@
+{
+	"commentStamp" : "",
+	"super" : "TestCase",
+	"category" : "Collections-Tests-OrderPreservingDictionary",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"nonIdentityOrderedAssociations",
+		"identityOrderedAssociations"
+	],
+	"name" : "StandardOrderedDictionaryTest",
+	"type" : "normal"
+}
