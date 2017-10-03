@@ -22,11 +22,6 @@ OrderPreservingStringDictionary >> at: aKey [
 ]
 
 { #category : #accessing }
-OrderPreservingStringDictionary >> defaultValue [
-	^ ''
-]
-
-{ #category : #accessing }
 OrderPreservingStringDictionary >> keyAtIdentityValue: aValue [
 	^ self
 		keyAtIdentityValue: aValue
