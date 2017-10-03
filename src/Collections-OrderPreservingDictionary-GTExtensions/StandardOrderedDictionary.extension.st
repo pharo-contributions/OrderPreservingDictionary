@@ -1,8 +1,8 @@
 Extension { #name : #StandardOrderedDictionary }
 
 { #category : #'*Collections-OrderPreservingDictionary-GTExtensions' }
-StandardOrderedDictionary >> gtInspectorItemsIn: composite [
-	^ composite table
+StandardOrderedDictionary >> gtInspectorItemsIn: aComposite [
+	^ aComposite table
 		title: 'Items';
 		display: [self associations];
 		children: [:each | 
