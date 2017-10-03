@@ -194,11 +194,6 @@ StandardOrderedDictionaryTest >> isTestingIdentityDictionary [
 	^ false
 ]
 
-{ #category : #testing }
-StandardOrderedDictionaryTest >> isTestingLazyDictionary [
-	^ false
-]
-
 { #category : #accessing }
 StandardOrderedDictionaryTest >> newValue [
 	^ 'newValue'
@@ -1154,18 +1149,6 @@ StandardOrderedDictionaryTest >> testKeysSortedSafely [
 		self
 			assertIsArray: dictionary keysSortedSafely
 			withElements: (self orderedKeysFirst: i) sorted].
-]
-
-{ #category : #tests }
-StandardOrderedDictionaryTest >> testLazyDictionary [
-	self isTestingLazyDictionary
-		ifFalse: [^ self].
-
-	self assert:
-		self emptyDictionary orderPreservingDictionary ==
-			self dictionaryClass emptyOrderPreservingDictionary.
-	self assert:
-		self dictionaryClass emptyOrderPreservingDictionary isEmpty.
 ]
 
 { #category : #tests }
