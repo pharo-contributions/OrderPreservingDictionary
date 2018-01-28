@@ -151,23 +151,90 @@ ConfigurationOfOrderPreservingDictionary class >> validate [
 
 { #category : #baselines }
 ConfigurationOfOrderPreservingDictionary >> baseline100: spec [ 
-	<version: '1.0-baseline'>
+	<version: '1.0-baseline' imports: #('1-master-baseline')>
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
+	<version: '1.3.1-baseline' imports: #('1.3-master-baseline')>
+
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.1' ]
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline137: spec [
+	<version: '1.3.7-baseline' imports: #('1.3-master-baseline')>
+
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.2' ]
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline138: spec [
+	<version: '1.3.8-baseline' imports: #('1.3-master-baseline')>
+
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
+				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.3' ]
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baseline140: spec [
+	<version: '1.4.0-baseline' imports: #('1.4-master-baseline')>
+
+	spec
+		for: #gemstone
+		do: [
+			spec blessing: #baseline.
+			spec
+				package: 'Collections-OrderPreservingDictionaryGemstoneCompatibility'
+				with: 'Collections-OrderPreservingDictionaryGemstoneCompatibility-monty.1' ].
+	spec
+		for: #gt
+		do: [
+			spec
+				package: 'Collections-OrderPreservingDictionaryGTExtensions'
+				with: 'Collections-OrderPreservingDictionaryGTExtensions-monty.1' ]
+]
+
+{ #category : #baselines }
+ConfigurationOfOrderPreservingDictionary >> baselineMaster13: spec [ 
+	<version: '1.3-master-baseline' imports: #('1-master-baseline')>
 	
-	spec for: #common do: [
-		spec blessing: #baseline.
-		spec repository: 'http://smalltalkhub.com/mc/PharoExtras/OrderPreservingDictionary/main'.	
-		spec description: 'Imported from SqueakSource'.
-		spec package: 'Collections-OrderPreservingDictionary'.
-		spec 
-			package: 'Collections-Tests-OrderPreservingDictionary' 
-			with: [spec requires: 'Collections-OrderPreservingDictionary'].
-			
-		spec
-			group: 'default' with: #('Core');
-			group: 'Core' with: #('Collections-OrderPreservingDictionary');
-			group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary'). ].
-		
-	"loads gemstone compatibility methods"
+	"load gemstone compatibility methods"
 	spec
 		for: #gemstone
 		do: [
@@ -191,57 +258,51 @@ ConfigurationOfOrderPreservingDictionary >> baseline100: spec [
 ]
 
 { #category : #baselines }
-ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
-	<version: '1.3.1-baseline' imports: #('1.0-baseline')>
+ConfigurationOfOrderPreservingDictionary >> baselineMaster14: spec [ 
+	<version: '1.4-master-baseline' imports: #('1-master-baseline')>
+	
+	"load gemstone compatibility methods"
 	spec
 		for: #gemstone
 		do: [
-			spec blessing: #baseline.
 			spec
-				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
+				package: 'Collections-OrderPreservingDictionary'
+				with: [ spec includes: 'Collections-OrderPreservingDictionaryGemstoneCompatibility' ].
+			"renamed from 'Collections-OrderPreservingDictionary-GemstoneCompatibility'"
+			spec
+				package: 'Collections-OrderPreservingDictionaryGemstoneCompatibility'
+				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
+
+	"load GT extensions"
 	spec
 		for: #gt
 		do: [
 			spec
-				package: 'Collections-OrderPreservingDictionary-GTExtensions'
-				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.1' ]
+				package: 'Collections-OrderPreservingDictionary'
+				with: [ spec includes: 'Collections-OrderPreservingDictionaryGTExtensions' ].
+			"renamed from 'Collections-OrderPreservingDictionary-GTExtensions'"
+			spec
+				package: 'Collections-OrderPreservingDictionaryGTExtensions'
+				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
 ]
 
 { #category : #baselines }
-ConfigurationOfOrderPreservingDictionary >> baseline137: spec [
-	<version: '1.3.7-baseline' imports: #('1.0-baseline')>
-	spec
-		for: #gemstone
-		do: [
-			spec blessing: #baseline.
-			spec
-				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
-	spec
-		for: #gt
-		do: [
-			spec
-				package: 'Collections-OrderPreservingDictionary-GTExtensions'
-				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.2' ]
-]
-
-{ #category : #baselines }
-ConfigurationOfOrderPreservingDictionary >> baseline138: spec [
-	<version: '1.3.8-baseline' imports: #('1.0-baseline')>
-	spec
-		for: #gemstone
-		do: [
-			spec blessing: #baseline.
-			spec
-				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-				with: 'Collections-OrderPreservingDictionary-GemstoneCompatibility-monty.1' ].
-	spec
-		for: #gt
-		do: [
-			spec
-				package: 'Collections-OrderPreservingDictionary-GTExtensions'
-				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.3' ]
+ConfigurationOfOrderPreservingDictionary >> baselineMaster1: spec [ 
+	<version: '1-master-baseline'>
+	
+	spec for: #common do: [
+		spec blessing: #baseline.
+		spec repository: 'http://smalltalkhub.com/mc/PharoExtras/OrderPreservingDictionary/main'.	
+		spec description: 'Imported from SqueakSource'.
+		spec package: 'Collections-OrderPreservingDictionary'.
+		spec 
+			package: 'Collections-Tests-OrderPreservingDictionary' 
+			with: [spec requires: 'Collections-OrderPreservingDictionary'].
+			
+		spec
+			group: 'default' with: #('Core');
+			group: 'Core' with: #('Collections-OrderPreservingDictionary');
+			group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary'). ].
 ]
 
 { #category : #accessing }
@@ -258,7 +319,7 @@ ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.3.8-baseline'.
+	spec for: #'common' version: '1.4.0-baseline'.
 
 ]
 
@@ -278,7 +339,7 @@ ConfigurationOfOrderPreservingDictionary >> project [
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '1.3.8'.
+	spec for: #'common' version: '1.4.0'.
 
 ]
 
@@ -525,6 +586,17 @@ ConfigurationOfOrderPreservingDictionary >> version137: spec [
 { #category : #versions }
 ConfigurationOfOrderPreservingDictionary >> version138: spec [ 
         <version: '1.3.8' imports: #('1.3.8-baseline')>
+
+        spec for: #common do: [
+                spec blessing: #release.
+			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.33'.
+			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.27'.
+                ].
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version140: spec [ 
+        <version: '1.4.0' imports: #('1.4.0-baseline')>
 
         spec for: #common do: [
                 spec blessing: #release.
