@@ -20,16 +20,18 @@ ConfigurationOfOrderPreservingDictionary class >> DevelopmentSupport [
 
 "See the methods in the 'development support' category on the class-side of MetacelloBaseConfiguration. Decide what development support methods you would like to use and copy them the the class-side of your configuration."
 	<apiDocumentation>
+
 ]
 
 { #category : #private }
 ConfigurationOfOrderPreservingDictionary class >> baseConfigurationClassIfAbsent: aBlock [
 
 	^Smalltalk
-		at: #'ConfigurationOf'
+		at: #MetacelloBaseConfiguration
 		ifAbsent: [ 
 			self ensureMetacelloBaseConfiguration.
-			Smalltalk at: #'ConfigurationOf' ifAbsent: aBlock ].
+			Smalltalk at: #MetacelloBaseConfiguration ifAbsent: aBlock ].
+
 ]
 
 { #category : #catalog }
@@ -64,6 +66,7 @@ ConfigurationOfOrderPreservingDictionary class >> ensureMetacello [
 
 { #category : #private }
 ConfigurationOfOrderPreservingDictionary class >> ensureMetacelloBaseConfiguration [
+
 	Smalltalk
 		at: #MetacelloBaseConfiguration
 		ifAbsent: [ 
@@ -322,14 +325,15 @@ ConfigurationOfOrderPreservingDictionary >> development: spec [
 
 { #category : #accessing }
 ConfigurationOfOrderPreservingDictionary >> project [
-    ^ project
-        ifNil: [ 
-            "Bootstrap Metacello if it is not already loaded"
-            self class ensureMetacello.
-            project := MetacelloMCProject new projectAttributes: self customProjectAttributes.	"Create the Metacello project"
-            (Smalltalk at: #'MetacelloVersionConstructor') on: self project: project.	"Construct the project"
-            project loadType: #'linear'.	"change to #atomic if desired"
-            project ]
+
+	^ project ifNil: [ | constructor |
+		"Bootstrap Metacello if it is not already loaded"
+		(self class baseConfigurationClassIfAbsent: []) ensureMetacello.
+		"Construct Metacello project"
+		project := MetacelloMCProject new projectAttributes: self customProjectAttributes. 
+		constructor := (Smalltalk at: #MetacelloVersionConstructor) on: self project: project.
+		project loadType: #linear. "change to #atomic if desired"
+		project ]
 ]
 
 { #category : #'symbolic versions' }
