@@ -1,0 +1,10 @@
+language: smalltalk
+sudo: false
+
+os:
+  - linux
+
+smalltalk:
+  - Pharo-6.1
+  - Pharo-7.0
+  - GemStone-3.3.0
