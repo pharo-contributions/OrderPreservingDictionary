@@ -1,3 +1,0 @@
-initialization
-setOrderPreservingDictionary: anOrderPreservingDictionary
-	orderPreservingDictionary := anOrderPreservingDictionary

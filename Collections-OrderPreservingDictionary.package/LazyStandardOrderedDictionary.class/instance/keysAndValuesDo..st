@@ -1,3 +1,0 @@
-enumerating
-keysAndValuesDo: aBlock
-	orderPreservingDictionary keysAndValuesDo: aBlock

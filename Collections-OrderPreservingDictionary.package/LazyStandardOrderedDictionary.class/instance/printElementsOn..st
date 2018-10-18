@@ -1,3 +1,0 @@
-printing
-printElementsOn: aStream
-	orderPreservingDictionary printElementsOn: aStream

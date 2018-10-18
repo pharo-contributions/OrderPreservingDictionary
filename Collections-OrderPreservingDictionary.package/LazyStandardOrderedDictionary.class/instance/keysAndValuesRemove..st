@@ -1,3 +1,0 @@
-removing
-keysAndValuesRemove: aTwoArgumentBlock
-	self copiedOrderPreservingDictionary keysAndValuesRemove: aTwoArgumentBlock

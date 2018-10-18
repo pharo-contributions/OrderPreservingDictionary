@@ -1,1 +1,0 @@
-A lazy version of StandardOrderedDictionary that only allocates memory when modified.

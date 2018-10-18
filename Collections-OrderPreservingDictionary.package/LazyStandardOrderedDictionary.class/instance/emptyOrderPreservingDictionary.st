@@ -1,3 +1,0 @@
-private
-emptyOrderPreservingDictionary
-	^ self class emptyOrderPreservingDictionary

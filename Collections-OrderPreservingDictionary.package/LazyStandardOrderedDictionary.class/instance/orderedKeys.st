@@ -1,3 +1,0 @@
-private
-orderedKeys
-	^ orderPreservingDictionary orderedKeys

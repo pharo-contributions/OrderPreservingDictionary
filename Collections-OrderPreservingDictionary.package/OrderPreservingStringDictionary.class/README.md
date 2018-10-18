@@ -1,1 +1,0 @@
-An order-preserving dictionary for strings that returns empty strings instead of raising errors when absent keys/values are accessed.

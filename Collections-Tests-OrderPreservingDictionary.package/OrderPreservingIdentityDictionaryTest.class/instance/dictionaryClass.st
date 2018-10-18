@@ -1,3 +1,0 @@
-accessing
-dictionaryClass
-	^ OrderPreservingIdentityDictionary

@@ -1,3 +1,0 @@
-testing
-isIdentityDictionary
-	^ orderPreservingDictionary isIdentityDictionary

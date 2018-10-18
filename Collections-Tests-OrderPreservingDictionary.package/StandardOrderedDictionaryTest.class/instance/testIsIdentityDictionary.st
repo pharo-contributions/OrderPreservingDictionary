@@ -1,3 +1,0 @@
-tests
-testIsIdentityDictionary
-	self assert: self emptyDictionary isIdentityDictionary = self isTestingIdentityDictionary
