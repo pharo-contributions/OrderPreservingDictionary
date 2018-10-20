@@ -3,6 +3,7 @@ SmalltalkCISpec {
 		SCIMetacelloLoadSpec {
 			#baseline : 'OrderPreservingDictionary',
 			#directory : 'src',
+			#load : [ 'Tests' ],
 			#platforms : [ #pharo ]
 		}
 	]
