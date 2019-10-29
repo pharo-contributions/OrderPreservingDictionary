@@ -1,3 +1,6 @@
+"
+Unit tests for StandardOrderedDictionary
+"
 Class {
 	#name : #StandardOrderedDictionaryTest,
 	#superclass : #TestCase,

@@ -1,3 +1,6 @@
+"
+Unit tests for OrderPreservingDictionary
+"
 Class {
 	#name : #OrderPreservingDictionaryTest,
 	#superclass : #StandardOrderedDictionaryTest,

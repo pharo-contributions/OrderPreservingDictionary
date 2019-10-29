@@ -1,3 +1,6 @@
+"
+Unit tests for StandardOrderedIdentityDictionary
+"
 Class {
 	#name : #StandardOrderedIdentityDictionaryTest,
 	#superclass : #StandardOrderedDictionaryTest,
