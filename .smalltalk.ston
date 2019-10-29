@@ -5,7 +5,6 @@ SmalltalkCISpec {
 			#directory : 'src',
 			#onWarningLog : true,
 			#load : [ 'Tests' ],
-			#useLatestMetacello : true,
 			#platforms : [ #pharo ]
 		},
 		SCIMetacelloLoadSpec {
