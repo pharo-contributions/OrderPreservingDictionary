@@ -12,30 +12,29 @@ BaselineOfOrderPreservingDictionary >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
-		do: [ spec package: 'Collections-OrderPreservingDictionary'.
+		do: [ 
+			"Packages"
+			spec package: 'Collections-OrderPreservingDictionary';
+				  package: 'Collections-OrderPreservingDictionary-Tests' with: [ spec requires: 'Collections-OrderPreservingDictionary' ].
+				
+			"Groups"	
 			spec
-				package: 'Collections-OrderPreservingDictionary-Tests'
-				with: [ spec requires: 'Collections-OrderPreservingDictionary' ].
-			spec
-				group: 'default' with: #('Core');
 				group: 'Core' with: #('Collections-OrderPreservingDictionary');
-				group: 'Tests' with: #('Collections-OrderPreservingDictionary-Tests') ].
+				group: 'Tests' with: #('Collections-OrderPreservingDictionary-Tests');
+				group: 'all' with: #('Core' 'Tests');
+				group: 'default' with: #('all') ].
+
 	spec
 		for: #gemstone
-		do: [ spec
-				package: 'Collections-OrderPreservingDictionary'
-				with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
-			spec
-				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
-				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
+		do: [ 
+			spec package: 'Collections-OrderPreservingDictionary' with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
+			spec package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' with: [ spec requires: 'Collections-OrderPreservingDictionary' ]].
+
 	spec
 		for: #gt
-		do: [ spec
-				package: 'Collections-OrderPreservingDictionary'
-				with: [ spec includes: 'Collections-OrderPreservingDictionary-GTExtensions' ].
-			spec
-				package: 'Collections-OrderPreservingDictionary-GTExtensions'
-				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ]
+		do: [ 
+			spec package: 'Collections-OrderPreservingDictionary' with: [ spec includes: 'Collections-OrderPreservingDictionary-GTExtensions' ].
+			spec package: 'Collections-OrderPreservingDictionary-GTExtensions' with: [ spec requires: 'Collections-OrderPreservingDictionary' ]]
 ]
 
 { #category : #accessing }
