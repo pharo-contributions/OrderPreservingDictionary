@@ -4,7 +4,7 @@ Unit tests for OrderPreservingIdentityDictionary
 Class {
 	#name : #OrderPreservingIdentityDictionaryTest,
 	#superclass : #OrderPreservingDictionaryTest,
-	#category : #'Collections-OrderPreservingDictionary-Tests'
+	#category : #'Collections-OrderPreservingDictionary-Tests-Base'
 }
 
 { #category : #accessing }

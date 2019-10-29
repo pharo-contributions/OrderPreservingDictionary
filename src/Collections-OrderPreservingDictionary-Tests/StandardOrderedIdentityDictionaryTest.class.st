@@ -4,7 +4,7 @@ Unit tests for StandardOrderedIdentityDictionary
 Class {
 	#name : #StandardOrderedIdentityDictionaryTest,
 	#superclass : #StandardOrderedDictionaryTest,
-	#category : #'Collections-OrderPreservingDictionary-Tests'
+	#category : #'Collections-OrderPreservingDictionary-Tests-Base'
 }
 
 { #category : #accessing }
