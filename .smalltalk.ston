@@ -3,8 +3,18 @@ SmalltalkCISpec {
 		SCIMetacelloLoadSpec {
 			#baseline : 'OrderPreservingDictionary',
 			#directory : 'src',
+			#onWarningLog : true,
 			#load : [ 'Tests' ],
-			#platforms : [ #pharo, #gemstone ]
+			#useLatestMetacello : true,
+			#platforms : [ #pharo ]
+		},
+		SCIMetacelloLoadSpec {
+			#baseline : 'OrderPreservingDictionary',
+			#directory : 'src',
+			#onWarningLog : true,
+			#load : [ 'Tests' ],
+			#useLatestMetacello : true,
+			#platforms : [ #gemstone ]
 		}
 	]
 }
