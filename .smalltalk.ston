@@ -4,7 +4,7 @@ SmalltalkCISpec {
 			#baseline : 'OrderPreservingDictionary',
 			#directory : 'src',
 			#load : [ 'Tests' ],
-			#platforms : [ #pharo #gemstone ]
+			#platforms : [ #pharo, #gemstone ]
 		}
 	]
 }
