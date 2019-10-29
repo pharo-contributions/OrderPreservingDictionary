@@ -1,6 +1,6 @@
 Extension { #name : #StandardOrderedDictionary }
 
-{ #category : #'*Collections-OrderPreservingDictionaryGTExtensions' }
+{ #category : #'*Collections-OrderPreservingDictionary-GTExtensions' }
 StandardOrderedDictionary >> gtInspectorItemsIn: aComposite [
 	^ aComposite table
 		title: 'Items';

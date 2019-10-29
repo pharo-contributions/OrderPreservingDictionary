@@ -1,6 +1,6 @@
 Extension { #name : #AbstractDictionary }
 
-{ #category : #'*Collections-OrderPreservingDictionaryGemstoneCompatibility' }
+{ #category : #'*Collections-OrderPreservingDictionary-GemstoneCompatibility' }
 AbstractDictionary >> capacity [
 	^ self tableSize
 ]

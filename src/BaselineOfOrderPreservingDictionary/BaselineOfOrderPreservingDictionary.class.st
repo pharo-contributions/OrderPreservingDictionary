@@ -21,17 +21,17 @@ BaselineOfOrderPreservingDictionary >> baseline: spec [
 		for: #gemstone
 		do: [ spec
 				package: 'Collections-OrderPreservingDictionary'
-				with: [ spec includes: 'Collections-OrderPreservingDictionaryGemstoneCompatibility' ].
+				with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
 			spec
-				package: 'Collections-OrderPreservingDictionaryGemstoneCompatibility'
+				package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility'
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
 	spec
 		for: #gt
 		do: [ spec
 				package: 'Collections-OrderPreservingDictionary'
-				with: [ spec includes: 'Collections-OrderPreservingDictionaryGTExtensions' ].
+				with: [ spec includes: 'Collections-OrderPreservingDictionary-GTExtensions' ].
 			spec
-				package: 'Collections-OrderPreservingDictionaryGTExtensions'
+				package: 'Collections-OrderPreservingDictionary-GTExtensions'
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ]
 ]
 
