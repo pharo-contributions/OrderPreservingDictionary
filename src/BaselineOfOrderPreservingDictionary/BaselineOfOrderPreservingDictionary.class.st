@@ -11,12 +11,12 @@ BaselineOfOrderPreservingDictionary >> baseline: spec [
 		for: #common
 		do: [ spec package: 'Collections-OrderPreservingDictionary'.
 			spec
-				package: 'Collections-Tests-OrderPreservingDictionary'
+				package: 'Collections-OrderPreservingDictionary-Tests'
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ].
 			spec
 				group: 'default' with: #('Core');
 				group: 'Core' with: #('Collections-OrderPreservingDictionary');
-				group: 'Tests' with: #('Collections-Tests-OrderPreservingDictionary') ].
+				group: 'Tests' with: #('Collections-OrderPreservingDictionary-Tests') ].
 	spec
 		for: #gemstone
 		do: [ spec
