@@ -149,12 +149,12 @@ ConfigurationOfOrderPreservingDictionary class >> validate [
 	^ ((Smalltalk at: #MetacelloToolBox) validateConfiguration: self debug: #() recurse: false) explore
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baseline100: spec [ 
 	<version: '1.0-baseline' imports: #('1-master-baseline')>
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
 	<version: '1.3.1-baseline' imports: #('1.3-master-baseline')>
 
@@ -173,7 +173,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline131: spec [
 				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.1' ]
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baseline137: spec [
 	<version: '1.3.7-baseline' imports: #('1.3-master-baseline')>
 
@@ -192,7 +192,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline137: spec [
 				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.2' ]
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baseline138: spec [
 	<version: '1.3.8-baseline' imports: #('1.3-master-baseline')>
 
@@ -211,7 +211,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline138: spec [
 				with: 'Collections-OrderPreservingDictionary-GTExtensions-monty.3' ]
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baseline140: spec [
 	<version: '1.4.0-baseline' imports: #('1.4-master-baseline')>
 
@@ -230,7 +230,7 @@ ConfigurationOfOrderPreservingDictionary >> baseline140: spec [
 				with: 'Collections-OrderPreservingDictionaryGTExtensions-monty.1' ]
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baselineMaster13: spec [ 
 	<version: '1.3-master-baseline' imports: #('1-master-baseline')>
 	
@@ -257,7 +257,7 @@ ConfigurationOfOrderPreservingDictionary >> baselineMaster13: spec [
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baselineMaster14: spec [ 
 	<version: '1.4-master-baseline' imports: #('1-master-baseline')>
 	
@@ -286,7 +286,7 @@ ConfigurationOfOrderPreservingDictionary >> baselineMaster14: spec [
 				with: [ spec requires: 'Collections-OrderPreservingDictionary' ] ].
 ]
 
-{ #category : #baselines }
+{ #category : #'outdated - baselines' }
 ConfigurationOfOrderPreservingDictionary >> baselineMaster1: spec [ 
 	<version: '1-master-baseline'>
 	
@@ -310,7 +310,7 @@ ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
     "Edit to return a collection of any custom attributes e.g. for conditional loading: Array with: #'Condition1' with: #'Condition2.
 	For more information see: http://code.google.com/p/metacello/wiki/CustomProjectAttrributes "
 
-	(Smalltalk includesKey: #GTInspector)
+	(Smalltalk globals includesKey: #GTInspector)
 		ifTrue: [ ^ #(gt) ]
 		ifFalse: [ ^ #() ]
 ]
@@ -319,8 +319,12 @@ ConfigurationOfOrderPreservingDictionary >> customProjectAttributes [
 ConfigurationOfOrderPreservingDictionary >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '1.4.0-baseline'.
-
+	spec for: #'common' do: [ 
+		spec
+			baseline: 'OrderPreservingDictionary' with: [ 
+				spec 
+					className: 'BaselineOfOrderPreservingDictionary';
+					repository: 'github://pharo-contributions/OrderPreservingDictionary:master/src' ]]
 ]
 
 { #category : #accessing }
@@ -339,12 +343,16 @@ ConfigurationOfOrderPreservingDictionary >> project [
 { #category : #'symbolic versions' }
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
-
-	spec for: #'common' version: '1.4.0'.
+	
+	"Old STHub version"
+	spec for: #'pharo4.x' version: '1.4.0'.
+	spec for: #'pharo5.x' version: '1.4.0'.
+	spec for: #'pharo6.x' version: '1.4.0'.	
+	spec for: #'common' version: '1.5.0'.
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version100: spec [ 
 	<version: '1.0' imports: #('1.0-baseline') >
 	
@@ -360,7 +368,7 @@ ConfigurationOfOrderPreservingDictionary >> version100: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version110: spec [ 
 	<version: '1.1' imports: #('1.0-baseline') >
 	
@@ -375,7 +383,7 @@ ConfigurationOfOrderPreservingDictionary >> version110: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version120: spec [
 	<version: '1.2' imports: #('1.0-baseline' )>
 
@@ -390,7 +398,7 @@ ConfigurationOfOrderPreservingDictionary >> version120: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version121: spec [
 	<version: '1.2.1' imports: #('1.0-baseline' )>
 
@@ -402,7 +410,7 @@ ConfigurationOfOrderPreservingDictionary >> version121: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version122: spec [
 	<version: '1.2.2' imports: #('1.0-baseline' )>
 
@@ -414,7 +422,7 @@ ConfigurationOfOrderPreservingDictionary >> version122: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version123: spec [
 	<version: '1.2.3' imports: #('1.0-baseline' )>
 
@@ -426,7 +434,7 @@ ConfigurationOfOrderPreservingDictionary >> version123: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version124: spec [
 	<version: '1.2.4' imports: #('1.0-baseline' )>
 
@@ -438,7 +446,7 @@ ConfigurationOfOrderPreservingDictionary >> version124: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version125: spec [
 	<version: '1.2.5' imports: #('1.0-baseline' )>
 
@@ -450,7 +458,7 @@ ConfigurationOfOrderPreservingDictionary >> version125: spec [
 
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version126: spec [ 
         <version: '1.2.6' imports: #('1.0-baseline')>
 
@@ -461,7 +469,7 @@ ConfigurationOfOrderPreservingDictionary >> version126: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version127: spec [ 
         <version: '1.2.7' imports: #('1.0-baseline')>
 
@@ -472,7 +480,7 @@ ConfigurationOfOrderPreservingDictionary >> version127: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version128: spec [ 
         <version: '1.2.8' imports: #('1.0-baseline')>
 
@@ -483,7 +491,7 @@ ConfigurationOfOrderPreservingDictionary >> version128: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version129: spec [ 
         <version: '1.2.9' imports: #('1.0-baseline')>
 
@@ -494,7 +502,7 @@ ConfigurationOfOrderPreservingDictionary >> version129: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version130: spec [ 
 	<version: '1.3.0' imports: #('1.0-baseline')>
 
@@ -504,7 +512,7 @@ ConfigurationOfOrderPreservingDictionary >> version130: spec [
 		spec package: 'Collections-Tests-OrderPreservingDictionary' with: 			'Collections-Tests-OrderPreservingDictionary-monty.14']
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version131: spec [ 
 	<version: '1.3.1' imports: #('1.3.1-baseline')>
 
@@ -518,7 +526,7 @@ ConfigurationOfOrderPreservingDictionary >> version131: spec [
 			with: 'Collections-Tests-OrderPreservingDictionary-monty.15'. ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version132: spec [ 
         <version: '1.3.2' imports: #('1.3.1-baseline')>
 
@@ -529,7 +537,7 @@ ConfigurationOfOrderPreservingDictionary >> version132: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version133: spec [ 
         <version: '1.3.3' imports: #('1.3.1-baseline')>
 
@@ -540,7 +548,7 @@ ConfigurationOfOrderPreservingDictionary >> version133: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version134: spec [ 
         <version: '1.3.4' imports: #('1.3.1-baseline')>
 
@@ -551,7 +559,7 @@ ConfigurationOfOrderPreservingDictionary >> version134: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version135: spec [ 
         <version: '1.3.5' imports: #('1.3.1-baseline')>
 
@@ -562,7 +570,7 @@ ConfigurationOfOrderPreservingDictionary >> version135: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version136: spec [ 
         <version: '1.3.6' imports: #('1.3.1-baseline')>
 
@@ -573,7 +581,7 @@ ConfigurationOfOrderPreservingDictionary >> version136: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version137: spec [ 
         <version: '1.3.7' imports: #('1.3.7-baseline')>
 
@@ -584,7 +592,7 @@ ConfigurationOfOrderPreservingDictionary >> version137: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version138: spec [ 
         <version: '1.3.8' imports: #('1.3.8-baseline')>
 
@@ -595,7 +603,7 @@ ConfigurationOfOrderPreservingDictionary >> version138: spec [
                 ].
 ]
 
-{ #category : #versions }
+{ #category : #'outdated - versions' }
 ConfigurationOfOrderPreservingDictionary >> version140: spec [ 
         <version: '1.4.0' imports: #('1.4.0-baseline')>
 
@@ -604,4 +612,16 @@ ConfigurationOfOrderPreservingDictionary >> version140: spec [
 			spec package: 'Collections-OrderPreservingDictionary' with: 'Collections-OrderPreservingDictionary-monty.33'.
 			spec package: 'Collections-Tests-OrderPreservingDictionary' with: 'Collections-Tests-OrderPreservingDictionary-monty.27'.
                 ].
+]
+
+{ #category : #versions }
+ConfigurationOfOrderPreservingDictionary >> version150: spec [ 
+	<version: '1.5.0'>
+
+ 	spec for: #'common' do: [ 
+		spec
+			baseline: 'OrderPreservingDictionary' with: [ 
+				spec 
+					className: 'BaselineOfOrderPreservingDictionary';
+					repository: 'github://pharo-contributions/OrderPreservingDictionary:1.5.0/src' ]]
 ]
