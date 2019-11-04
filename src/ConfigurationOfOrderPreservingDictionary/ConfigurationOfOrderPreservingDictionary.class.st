@@ -343,12 +343,17 @@ ConfigurationOfOrderPreservingDictionary >> project [
 { #category : #'symbolic versions' }
 ConfigurationOfOrderPreservingDictionary >> stable: spec [
 	<symbolicVersion: #'stable'>
+
+	spec for: #'common' version: '1.5.0'.
 	
-	"Old STHub version"
+	"use old STHub version for elder Pharo versions"
 	spec for: #'pharo4.x' version: '1.4.0'.
 	spec for: #'pharo5.x' version: '1.4.0'.
 	spec for: #'pharo6.x' version: '1.4.0'.	
-	spec for: #'common' version: '1.5.0'.
+	
+	"use new GitHub version for more recent Pharo versions"
+	spec for: #'pharo7.x' version: '1.5.0'.	
+	spec for: #'pharo8.x' version: '1.5.0'.		
 
 ]
 
