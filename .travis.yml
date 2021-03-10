@@ -8,3 +8,5 @@ smalltalk:
   - Pharo-6.1
   - Pharo-7.0
 #  - GemStone-3.3.0      (disabled, requires someone with GS knowledge to repair)
+  - Pharo32-8.0
+  
