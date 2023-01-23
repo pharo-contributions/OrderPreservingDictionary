@@ -37,7 +37,7 @@ StandardOrderedDictionary class >> newFrom: anAssociationCollection [
 		newDictionary
 			at: each key
 			put: each value].
-	^ newDictionary.
+	^ newDictionary
 ]
 
 { #category : #'instance creation' }
@@ -49,7 +49,7 @@ StandardOrderedDictionary class >> newFromPairs: aSequenceableCollection [
 		newDictionary
 			at: (aSequenceableCollection at: i)
 			put: (aSequenceableCollection at: i + 1)].
-	^ newDictionary.
+	^ newDictionary
 ]
 
 { #category : #comparing }
@@ -69,7 +69,7 @@ StandardOrderedDictionary >> = anObject [
 	dictionary associationsDo: [:each |
 		(anObject at: each key ifAbsent: [^ false]) = each value
 			ifFalse: [^ false]].
-	^ true.
+	^ true
 ]
 
 { #category : #adding }
@@ -83,7 +83,7 @@ StandardOrderedDictionary >> add: anAssociation [
 			orderedKeys size > oldSize
 				ifFalse: [self growOrderedKeys].
 			orderedKeys at: oldSize + 1 put: anAssociation key].
-	^ anAssociation.
+	^ anAssociation
 ]
 
 { #category : #adding }
@@ -92,7 +92,7 @@ StandardOrderedDictionary >> addAll: anAssociationCollection [
 	any collection of associations including Arrays and OrderedCollections"
 
 	anAssociationCollection associationsDo: [:each | self add: each].
-	^ anAssociationCollection.
+	^ anAssociationCollection
 ]
 
 { #category : #accessing }
@@ -126,7 +126,7 @@ StandardOrderedDictionary >> associations [
 	self associationsDo: [:each |
 		associations at: i put: each.
 		i := i + 1].
-	^ associations.
+	^ associations
 ]
 
 { #category : #enumerating }
@@ -179,7 +179,7 @@ StandardOrderedDictionary >> at: aKey ifPresent: aPresentBlock ifAbsent: anAbsen
 	self
 		at: aKey
 		ifPresent: [:value | ^ aPresentBlock cull: value].
-	^ anAbsentBlock value.
+	^ anAbsentBlock value
 ]
 
 { #category : #accessing }
@@ -195,7 +195,7 @@ StandardOrderedDictionary >> at: aKey put: aValue [
 			orderedKeys size > oldSize
 				ifFalse: [self growOrderedKeys].
 			orderedKeys at: oldSize + 1 put: aKey].
-	^ aValue.
+	^ aValue
 ]
 
 { #category : #accessing }
@@ -253,7 +253,7 @@ StandardOrderedDictionary >> growOrderedKeys [
 			replaceFrom: 1
 			to: orderedKeys size
 			with: orderedKeys
-			startingAt: 1.
+			startingAt: 1
 ]
 
 { #category : #comparing }
@@ -273,7 +273,7 @@ StandardOrderedDictionary >> identityIndexOfKey: aKey ifAbsent: aBlock [
 	1 to: self size do: [:i |
 		(orderedKeys at: i) == aKey
 			ifTrue: [^ i]].
-	^ aBlock value.
+	^ aBlock value
 ]
 
 { #category : #testing }
@@ -297,7 +297,7 @@ StandardOrderedDictionary >> includesIdentity: anObject [
 	self valuesDo: [:each |
 		each == anObject
 			ifTrue: [^ true]].
-	^ false.
+	^ false
 ]
 
 { #category : #testing }
@@ -317,13 +317,13 @@ StandardOrderedDictionary >> indexOfKey: aKey ifAbsent: aBlock [
 	1 to: self size do: [:i |
 		(orderedKeys at: i) = aKey
 			ifTrue: [^ i]].
-	^ aBlock value.
+	^ aBlock value
 ]
 
 { #category : #initialization }
 StandardOrderedDictionary >> initialize: aCapacity [
 	dictionary := self dictionaryClass new: aCapacity.
-	orderedKeys := Array new: aCapacity.
+	orderedKeys := Array new: aCapacity
 ]
 
 { #category : #testing }
@@ -360,7 +360,7 @@ StandardOrderedDictionary >> keyAtIdentityValue: aValue ifAbsent: aBlock [
 	self keysAndValuesDo: [:key :value |
 		value == aValue
 			ifTrue: [^ key]].
-	^ aBlock value.
+	^ aBlock value
 ]
 
 { #category : #accessing }
@@ -395,7 +395,7 @@ StandardOrderedDictionary >> keyForIdentity: anObject [
 	self keysAndValuesDo: [:key :value |
 		value == anObject
 			ifTrue: [^ key]].
-	^ nil.
+	^ nil
 ]
 
 { #category : #accessing }
@@ -423,7 +423,7 @@ StandardOrderedDictionary >> keysAndValuesRemove: aTwoArgumentBlock [
 			value: each key
 			value: each value)
 			ifTrue: [removedAssociations add: each]].
-	removedAssociations do: [:each | self removeKey: each key].
+	removedAssociations do: [:each | self removeKey: each key]
 ]
 
 { #category : #enumerating }
@@ -453,7 +453,7 @@ StandardOrderedDictionary >> orderedKeysIdentityIndexOf: aKey [
 	1 to: orderedKeys size do: [:i |
 		(orderedKeys at: i) == aKey
 			ifTrue: [^ i]].
-	^ 0.
+	^ 0
 ]
 
 { #category : #private }
@@ -478,13 +478,13 @@ StandardOrderedDictionary >> orderedKeysRemove: aRemovedKey [
 	key slot before removing and shifting"
 	orderedKeys
 		at: self size + 1
-		put: nil.
+		put: nil
 ]
 
 { #category : #copying }
 StandardOrderedDictionary >> postCopy [
 	orderedKeys := orderedKeys copy.
-	dictionary := dictionary copy.
+	dictionary := dictionary copy
 ]
 
 { #category : #printing }
@@ -502,7 +502,7 @@ StandardOrderedDictionary >> printElementsOn: aStream [
 					print: each value.
 				(i < self size)
 					ifTrue: [aStream space]]].
-	aStream nextPut: $).
+	aStream nextPut: $)
 ]
 
 { #category : #removing }
@@ -516,7 +516,7 @@ StandardOrderedDictionary >> removeAll [
 		orderedKeys
 			at: i
 			put: nil].
-	dictionary removeAll.
+	dictionary removeAll
 ]
 
 { #category : #removing }
@@ -525,7 +525,7 @@ StandardOrderedDictionary >> removeKey: aKey [
 
 	value := dictionary removeKey: aKey.
 	self orderedKeysRemove: aKey.
-	^ value.
+	^ value
 ]
 
 { #category : #removing }
@@ -539,7 +539,7 @@ StandardOrderedDictionary >> removeKey: aKey ifAbsent: aBlock [
 			ifAbsent: aBlock.
 	dictionary size < oldSize
 		ifTrue: [self orderedKeysRemove: aKey].
-	^ value.
+	^ value
 ]
 
 { #category : #removing }

@@ -19,9 +19,9 @@ OrderPreservingStringDictionaryTest >> testAssociationAt [
 	dictionary := self emptyDictionary.
 	self orderedAssociations do: [:each |
 		self assert: (dictionary associationAt: each key) isNil.
-	
+
 		dictionary add: each.
-		self assert: (dictionary associationAt: each key) equals: each].
+		self assert: (dictionary associationAt: each key) equals: each]
 ]
 
 { #category : #tests }
@@ -33,7 +33,7 @@ OrderPreservingStringDictionaryTest >> testAt [
 		self assert: (dictionary at: each key) equals: ''.
 
 		dictionary add: each.
-		self assert: (dictionary at: each key) equals: each value].
+		self assert: (dictionary at: each key) equals: each value]
 ]
 
 { #category : #tests }
@@ -47,7 +47,7 @@ OrderPreservingStringDictionaryTest >> testKeyAtIdentityValue [
 		dictionary add: each.
 		self
 			assert: (dictionary keyAtIdentityValue: each value) equals: each key;
-			assert: (dictionary keyAtIdentityValue: each value copy) equals: ''].
+			assert: (dictionary keyAtIdentityValue: each value copy) equals: '']
 ]
 
 { #category : #tests }

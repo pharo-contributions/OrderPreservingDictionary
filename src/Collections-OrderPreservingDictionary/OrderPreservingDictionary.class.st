@@ -29,7 +29,7 @@ OrderPreservingDictionary class >> newFrom: anAssociationCollection [
 	newDictionary := super newFrom: anAssociationCollection.
 	(anAssociationCollection respondsTo: #defaultValue)
 		ifTrue: [newDictionary defaultValue: anAssociationCollection defaultValue].
-	^ newDictionary.
+	^ newDictionary
 ]
 
 { #category : #accessing }
@@ -64,7 +64,7 @@ OrderPreservingDictionary >> defaultValue: aDefaultValue [
 { #category : #initialization }
 OrderPreservingDictionary >> initialize: aCapacity withDefaultValue: aDefaultValue [
 	self initialize: aCapacity.
-	defaultValue := aDefaultValue.
+	defaultValue := aDefaultValue
 ]
 
 { #category : #accessing }

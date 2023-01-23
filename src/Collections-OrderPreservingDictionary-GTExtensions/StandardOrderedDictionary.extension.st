@@ -5,29 +5,29 @@ StandardOrderedDictionary >> gtInspectorItemsIn: aComposite [
 	^ aComposite table
 		title: 'Items';
 		display: [self associations];
-		children: [:each | 
+		children: [:each |
 			each value isDictionary
-				ifTrue: [each value associations] 
+				ifTrue: [each value associations]
 				ifFalse: [
 					(each value isArray
 						and: [each value allSatisfy: #isDictionary])
 						ifTrue: [each value collectWithIndex: [:x :i | i -> x]]
 						ifFalse: [#()]]];
-		column: 'Key' 
+		column: 'Key'
 			evaluated: [:each | GTObjectPrinter new asTruncatedTextFrom: each key];
-		column: 'Value' 
+		column: 'Value'
 			evaluated: [:each | GTObjectPrinter new asTruncatedTextFrom: each value];
 		selectionAct: [ :table |
 			table rawSelection do: [:assoc | self removeKey: assoc key].
 			table update ]
 			entitled: 'Remove item(s)';
-		selectionPopulate: #selection 
+		selectionPopulate: #selection
 			entitled: 'Open key'
 			with: [:table |
 				(table rawSelection collect: #key) gtInspectorInterestingObject];
 		beMultiple;
 		withSmalltalkSearch;
-		send: [:selection | 
+		send: [:selection |
 			selection
 				ifNotNil: [
 					selection size = 1
