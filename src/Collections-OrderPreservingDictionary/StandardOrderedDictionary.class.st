@@ -13,11 +13,6 @@ Class {
 	#category : #'Collections-OrderPreservingDictionary'
 }
 
-{ #category : #inspecting }
-StandardOrderedDictionary class >> inspectorClass [
-	^ Dictionary inspectorClass
-]
-
 { #category : #'instance creation' }
 StandardOrderedDictionary class >> new [
 
