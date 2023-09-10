@@ -9,11 +9,13 @@ Class {
 
 { #category : #accessing }
 StandardOrderedIdentityDictionary >> dictionaryClass [
+
 	^ IdentityDictionary
 ]
 
 { #category : #accessing }
 StandardOrderedIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
+
 	^ self
 		identityIndexOfKey: aKey
 		ifAbsent: aBlock
@@ -21,10 +23,12 @@ StandardOrderedIdentityDictionary >> indexOfKey: aKey ifAbsent: aBlock [
 
 { #category : #testing }
 StandardOrderedIdentityDictionary >> isIdentityDictionary [
+
 	^ true
 ]
 
 { #category : #private }
 StandardOrderedIdentityDictionary >> orderedKeysIndexOf: aKey [
+
 	^ self orderedKeysIdentityIndexOf: aKey
 ]

@@ -9,42 +9,36 @@ Class {
 
 { #category : #accessing }
 OrderPreservingStringDictionary >> associationAt: aKey [
-	^ self
-		associationAt: aKey
-		ifAbsent: [nil]
+
+	^ self associationAt: aKey ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
 OrderPreservingStringDictionary >> at: aKey [
-	^ self
-		at: aKey
-		ifAbsent: ['']
+
+	^ self at: aKey ifAbsent: [ '' ]
 ]
 
 { #category : #accessing }
 OrderPreservingStringDictionary >> keyAtIdentityValue: aValue [
-	^ self
-		keyAtIdentityValue: aValue
-		ifAbsent: ['']
+
+	^ self keyAtIdentityValue: aValue ifAbsent: [ '' ]
 ]
 
 { #category : #accessing }
 OrderPreservingStringDictionary >> keyAtIndex: anIndex [
-	^ self
-		keyAtIndex: anIndex
-		ifAbsent: ['']
+
+	^ self keyAtIndex: anIndex ifAbsent: [ '' ]
 ]
 
 { #category : #accessing }
 OrderPreservingStringDictionary >> keyAtValue: aValue [
-	^ self
-		keyAtValue: aValue
-		ifAbsent: ['']
+
+	^ self keyAtValue: aValue ifAbsent: [ '' ]
 ]
 
 { #category : #removing }
 OrderPreservingStringDictionary >> removeKey: aKey [
-	^ self
-		removeKey: aKey
-		ifAbsent: ['']
+
+	^ self removeKey: aKey ifAbsent: [ '' ]
 ]

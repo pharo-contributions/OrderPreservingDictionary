@@ -9,10 +9,12 @@ Class {
 
 { #category : #accessing }
 OrderPreservingIdentityDictionaryTest >> dictionaryClass [
+
 	^ OrderPreservingIdentityDictionary
 ]
 
 { #category : #testing }
 OrderPreservingIdentityDictionaryTest >> isTestingIdentityDictionary [
+
 	^ true
 ]
