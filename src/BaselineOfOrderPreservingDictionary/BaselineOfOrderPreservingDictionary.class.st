@@ -26,8 +26,7 @@ BaselineOfOrderPreservingDictionary >> baseline: spec [
 				group: 'all' with: #('Core' 'Tools' 'Tests');
 				group: 'default' with: #('all') ].
 
-	self baselineGT: spec.
-	self baselineGemstone: spec
+	self baselineGT: spec
 ]
 
 { #category : #'baselines - legacy' }
@@ -38,16 +37,6 @@ BaselineOfOrderPreservingDictionary >> baselineGT: spec [
 		do: [
 			spec package: 'Collections-OrderPreservingDictionary-GTExtensions' with: [ spec requires: #('Collections-OrderPreservingDictionary') ].
 			spec group: 'Tools' with: #('Collections-OrderPreservingDictionary-GTExtensions') ]
-]
-
-{ #category : #'baselines - gemstone' }
-BaselineOfOrderPreservingDictionary >> baselineGemstone: spec [
-
-	spec
-		for: #gemstone
-		do: [
-			spec package: 'Collections-OrderPreservingDictionary' with: [ spec includes: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' ].
-			spec package: 'Collections-OrderPreservingDictionary-GemstoneCompatibility' with: [ spec requires: 'Collections-OrderPreservingDictionary' ]]
 ]
 
 { #category : #accessing }
