@@ -9,22 +9,24 @@ Class {
 
 { #category : #accessing }
 OrderPreservingIdentityStringDictionary >> dictionaryClass [
+
 	^ IdentityDictionary
 ]
 
 { #category : #accessing }
 OrderPreservingIdentityStringDictionary >> indexOfKey: aKey ifAbsent: aBlock [
-	^ self
-		identityIndexOfKey: aKey
-		ifAbsent: aBlock
+
+	^ self identityIndexOfKey: aKey ifAbsent: aBlock
 ]
 
 { #category : #testing }
 OrderPreservingIdentityStringDictionary >> isIdentityDictionary [
+
 	^ true
 ]
 
 { #category : #private }
 OrderPreservingIdentityStringDictionary >> orderedKeysIndexOf: aKey [
+
 	^ self orderedKeysIdentityIndexOf: aKey
 ]

@@ -1,10 +1,10 @@
 "
-A baseline for an order preserving dictionary (https://github.com/pharo-contributions/OrderPreservingDictionary)
+A baseline for an order preserving dictionary [https://github.com/pharo-contributions/OrderPreservingDictionary](https://github.com/pharo-contributions/OrderPreservingDictionary)
 "
 Class {
 	#name : #BaselineOfOrderPreservingDictionary,
 	#superclass : #BaselineOf,
-	#category : #BaselineOfOrderPreservingDictionary
+	#category : #'BaselineOfOrderPreservingDictionary-Base'
 }
 
 { #category : #baselines }

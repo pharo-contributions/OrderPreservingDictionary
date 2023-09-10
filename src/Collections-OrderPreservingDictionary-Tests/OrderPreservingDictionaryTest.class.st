@@ -24,8 +24,8 @@ OrderPreservingDictionaryTest >> newDefaultValue [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAssociationAt [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self emptyDictionary.
 	self orderedAssociations do: [:each |
 		self assert: (dictionary associationAt: each key) isNil.
@@ -36,6 +36,7 @@ OrderPreservingDictionaryTest >> testAssociationAt [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAssociationsSelect [
+
 	super testAssociationsSelect.
 
 	self assert:
@@ -46,8 +47,8 @@ OrderPreservingDictionaryTest >> testAssociationsSelect [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testAt [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
 	self orderedAssociations do: [:each |
@@ -59,8 +60,8 @@ OrderPreservingDictionaryTest >> testAt [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCapacity [
-	| defaultCapacity dictionary |
 
+	| defaultCapacity dictionary |
 	super testCapacity.
 
 	defaultCapacity := self defaultCapacity.
@@ -76,8 +77,8 @@ OrderPreservingDictionaryTest >> testCapacity [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCollect [
-	super testCollect.
 
+	super testCollect.
 	self assert:
 		(self dictionaryWithOrderedAssociations
 			defaultValue: self defaultValue;
@@ -86,8 +87,8 @@ OrderPreservingDictionaryTest >> testCollect [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCopy [
-	| dictionary copy |
 
+	| dictionary copy |
 	super testCopy.
 
 	dictionary := self dictionaryWithOrderedAssociations.
@@ -98,8 +99,8 @@ OrderPreservingDictionaryTest >> testCopy [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testCopyEmpty [
-	| dictionary copy |
 
+	| dictionary copy |
 	super testCopyEmpty.
 
 	dictionary := self dictionaryWithOrderedAssociations.
@@ -110,19 +111,20 @@ OrderPreservingDictionaryTest >> testCopyEmpty [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testDefaultValue [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self dictionaryClass defaultValue: self defaultValue.
 	self
 		assert: dictionary defaultValue equals: self defaultValue;
-		assert: (dictionary defaultValue: self newDefaultValue) == dictionary;
+		assert: (dictionary defaultValue: self newDefaultValue)
+		identicalTo: dictionary;
 		assert: dictionary defaultValue equals: self newDefaultValue
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtIdentityValue [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
 	self orderedAssociations do: [:each |
@@ -138,8 +140,8 @@ OrderPreservingDictionaryTest >> testKeyAtIdentityValue [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtIndex [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
 	self assert: (dictionary keyAtIndex: 0) equals: self defaultValue.
@@ -152,8 +154,8 @@ OrderPreservingDictionaryTest >> testKeyAtIndex [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testKeyAtValue [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self emptyDictionary.
 	dictionary defaultValue: self defaultValue.
 	self orderedAssociations do: [:each |
@@ -165,8 +167,8 @@ OrderPreservingDictionaryTest >> testKeyAtValue [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testNewFrom [
-	| dictionary copy |
 
+	| dictionary copy |
 	super testNewFrom.
 
 	dictionary := self dictionaryClass newFrom: self orderedAssociations.
@@ -177,8 +179,8 @@ OrderPreservingDictionaryTest >> testNewFrom [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testNewWithDefaultValue [
-	| dictionary |
 
+	| dictionary |
 	dictionary :=
 		self dictionaryClass
 			new: 10
@@ -188,10 +190,9 @@ OrderPreservingDictionaryTest >> testNewWithDefaultValue [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testRemoveAll [
+
 	| dictionary |
-
 	super testRemoveAll.
-
 	dictionary := self dictionaryWithOrderedAssociations.
 	dictionary
 		defaultValue: self defaultValue;
@@ -201,28 +202,29 @@ OrderPreservingDictionaryTest >> testRemoveAll [
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testRemoveKey [
-	| dictionary |
 
+	| dictionary |
 	dictionary := self dictionaryWithOrderedAssociations.
 	dictionary defaultValue: self defaultValue.
-	self orderedAssociations withIndexDo: [:each :i |
+	self orderedAssociations withIndexDo: [ :each :i |
 		self assert: (dictionary removeKey: each key) equals: each value.
-		self
-			assertKey: each key
-			wasRemovedfrom: dictionary.
+		self assertKey: each key wasRemovedfrom: dictionary.
 		self
 			assertIsDictionary: dictionary
 			withOrderedAssociations: (self orderedAssociationsAllButFirst: i).
-
-		self assert: (dictionary removeKey: each key) = self defaultValue]
+		self
+			assert: (dictionary removeKey: each key)
+			equals: self defaultValue ]
 ]
 
 { #category : #tests }
 OrderPreservingDictionaryTest >> testSelect [
+
 	super testSelect.
 
-	self assert:
-		(self dictionaryWithOrderedAssociations
-			defaultValue: self defaultValue;
-			select: [:each | true]) defaultValue equals: self defaultValue
+	self
+		assert: (self dictionaryWithOrderedAssociations
+				 defaultValue: self defaultValue;
+				 select: [ :each | true ]) defaultValue
+		equals: self defaultValue
 ]
