@@ -1,6 +1,6 @@
 # Order Preserving Dictionary
 
-OrderPreservingDictionary preserves the order in which elements were added to to it.
+*OrderPreservingDictionary* preserves the order in which elements were added to to it.
 
 [![Unit Tests](https://github.com/pharo-contributions/OrderPreservingDictionary/workflows/Build/badge.svg?branch=master)](https://github.com/pharo-contributions/OrderPreservingDictionary/actions?query=workflow%3ABuild)
 [![Coverage Status](https://codecov.io/github/pharo-contributions/OrderPreservingDictionary/coverage.svg?branch=master)](https://codecov.io/gh/pharo-contributions/OrderPreservingDictionary/branch/master)
