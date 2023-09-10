@@ -9,7 +9,7 @@ SmalltalkCISpec {
   ],
   #testing : {
     #coverage : {
-      #packages : [ 'Collections-OrderPreservingDictionary*' ],
+      #packages : [ 'Collections-OrderPreservingDictionary*' ],                     
       #format: #lcov
     }
   }
