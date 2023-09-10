@@ -10,7 +10,7 @@ Class {
 		'dictionary',
 		'orderedKeys'
 	],
-	#category : #'Collections-OrderPreservingDictionary'
+	#category : #'Collections-OrderPreservingDictionary-Base'
 }
 
 { #category : #'instance creation' }

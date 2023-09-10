@@ -4,7 +4,7 @@ An order-preserving dictionary for strings that returns empty strings instead of
 Class {
 	#name : #OrderPreservingStringDictionary,
 	#superclass : #StandardOrderedDictionary,
-	#category : #'Collections-OrderPreservingDictionary'
+	#category : #'Collections-OrderPreservingDictionary-Base'
 }
 
 { #category : #accessing }

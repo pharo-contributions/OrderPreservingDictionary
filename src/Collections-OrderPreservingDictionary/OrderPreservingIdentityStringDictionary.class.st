@@ -4,7 +4,7 @@ An IdentityDictionary version that uses == instead of = for key comparing.
 Class {
 	#name : #OrderPreservingIdentityStringDictionary,
 	#superclass : #OrderPreservingStringDictionary,
-	#category : #'Collections-OrderPreservingDictionary'
+	#category : #'Collections-OrderPreservingDictionary-Base'
 }
 
 { #category : #accessing }
