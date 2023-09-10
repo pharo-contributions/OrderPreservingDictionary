@@ -2,7 +2,15 @@
 
 OrderPreservingDictionary preserves the order in which elements were added to to it.
 
-[![Build Status](https://travis-ci.org/pharo-contributions/OrderPreservingDictionary.svg?branch=master)](https://travis-ci.org/pharo-contributions/OrderPreservingDictionary) [![Coverage Status](https://coveralls.io/repos/github/pharo-contributions/OrderPreservingDictionary/badge.svg?branch=master)](https://coveralls.io/github/pharo-contributions/OrderPreservingDictionary?branch=master)
+[![Unit Tests](https://github.com/pharo-contributions/OrderPreservingDictionary/workflows/Build/badge.svg?branch=master)](https://github.com/pharo-contributions/OrderPreservingDictionary/actions?query=workflow%3ABuild)
+[![Coverage Status](https://codecov.io/github/pharo-contributions/OrderPreservingDictionary/coverage.svg?branch=master)](https://codecov.io/gh/pharo-contributions/OrderPreservingDictionary/branch/master)
+
+[![Pharo 6](https://img.shields.io/badge/Pharo-6.0-%23aac9ff.svg)](https://pharo.org/download)
+[![Pharo 7](https://img.shields.io/badge/Pharo-7.0-%23aac9ff.svg)](https://pharo.org/download)
+[![Pharo 8](https://img.shields.io/badge/Pharo-8.0-%23aac9ff.svg)](https://pharo.org/download)
+[![Pharo 9](https://img.shields.io/badge/Pharo-9.0-%23aac9ff.svg)](https://pharo.org/download)
+[![Pharo 10](https://img.shields.io/badge/Pharo-10-%23aac9ff.svg)](https://pharo.org/download)
+[![Pharo 11](https://img.shields.io/badge/Pharo-11-%23aac9ff.svg)](https://pharo.org/download)
 
 ## Quick Start 
 
